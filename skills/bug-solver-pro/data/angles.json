@@ -1,0 +1,217 @@
+{
+  "schema_version": 1,
+  "axes": [
+    {
+      "id": "representation",
+      "domains": [
+        "representation",
+        "contracts",
+        "state"
+      ],
+      "trigger": "Values differ after conversion or only edge inputs fail.",
+      "question": "Which distinctions, ranges, units, encodings or normalization rules change across the first incorrect boundary?",
+      "observation": "Capture original type/bytes and intermediate values; compare empty, boundary and equivalent-representation controls.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/16-hard-to-trace-debugging.md"
+      ]
+    },
+    {
+      "id": "ownership",
+      "domains": [
+        "lifecycle",
+        "state"
+      ],
+      "trigger": "A value changes unexpectedly or two records influence each other.",
+      "question": "Who owns and writes this value; is it copied, aliased, borrowed or observed after mutation?",
+      "observation": "Trace identities and all relevant writers; compare isolated ownership without changing unrelated conditions.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/16-hard-to-trace-debugging.md"
+      ]
+    },
+    {
+      "id": "lifetime",
+      "domains": [
+        "lifecycle",
+        "performance"
+      ],
+      "trigger": "Failure depends on startup, cleanup, reuse or late callbacks.",
+      "question": "When does each dependency become ready and invalid, and who may still use it?",
+      "observation": "Observe readiness, acquisition, release and callbacks under fresh, reused, error and cancel paths.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/16-hard-to-trace-debugging.md"
+      ]
+    },
+    {
+      "id": "completion",
+      "domains": [
+        "control-flow",
+        "lifecycle"
+      ],
+      "trigger": "Success is reported early or failures disappear.",
+      "question": "Who owns required child completion, error propagation and cancellation?",
+      "observation": "Hold one child at a barrier and inject a distinct failure; compare caller outcome and effect state.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/16-hard-to-trace-debugging.md"
+      ]
+    },
+    {
+      "id": "ordering",
+      "domains": [
+        "concurrency",
+        "control-flow"
+      ],
+      "trigger": "Outcomes depend on overlap, event order or retries.",
+      "question": "Which happens-before relation must hold, and which real boundary enforces it?",
+      "observation": "Use identities and versions with controlled interleavings; distinguish logical order from clock timestamps.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/16-hard-to-trace-debugging.md"
+      ]
+    },
+    {
+      "id": "atomicity",
+      "domains": [
+        "concurrency",
+        "state"
+      ],
+      "trigger": "Some effects succeed while related state fails or updates overwrite each other.",
+      "question": "Which mutations share an atomic boundary and what outcome is unknown after each failure point?",
+      "observation": "Inspect connection/transaction identities and inject failures at commit, publish, acknowledgement and reply boundaries.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/16-hard-to-trace-debugging.md"
+      ]
+    },
+    {
+      "id": "durability-freshness",
+      "domains": [
+        "state"
+      ],
+      "trigger": "Saved data is missing or multiple read paths disagree.",
+      "question": "Which source is authoritative, what survives failure, and how stale may projections be?",
+      "observation": "Compare authoritative state, projections and versions across one write and isolated recovery.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/16-hard-to-trace-debugging.md"
+      ]
+    },
+    {
+      "id": "protocol",
+      "domains": [
+        "integration",
+        "contracts"
+      ],
+      "trigger": "A dependency or byte boundary changes meaning or outcome.",
+      "question": "What framing, partial completion, versioning, retry and ownership contracts actually apply?",
+      "observation": "Inspect raw boundary data, completion counts and both peers; vary legal segmentation and relevant versions.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/16-hard-to-trace-debugging.md"
+      ]
+    },
+    {
+      "id": "authority",
+      "domains": [
+        "security",
+        "state"
+      ],
+      "trigger": "An actor reaches the wrong resource or identity changes across paths.",
+      "question": "Are actor, resource, scope and validated representation preserved at the point of use?",
+      "observation": "Use authorized isolated identities and inspect allow/deny decisions before effects; never expose credentials.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/16-hard-to-trace-debugging.md"
+      ]
+    },
+    {
+      "id": "progress-resources",
+      "domains": [
+        "performance",
+        "concurrency",
+        "control-flow"
+      ],
+      "trigger": "Work stalls, queues grow or capacity disappears.",
+      "question": "Who waits for whom, who releases capacity, and what measure proves forward progress?",
+      "observation": "Build wait/resource ownership evidence and measure bounded equivalent workloads, including error/cancel cleanup.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/16-hard-to-trace-debugging.md"
+      ]
+    },
+    {
+      "id": "algorithm",
+      "domains": [
+        "performance",
+        "control-flow"
+      ],
+      "trigger": "Work or failure depends on size, boundaries, cycles or ordering.",
+      "question": "Does the algorithm preserve coverage and termination while doing acceptable work?",
+      "observation": "Compare independent item sets and operation counts across empty, singleton, tied, cyclic and scaled fixtures.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/16-hard-to-trace-debugging.md"
+      ]
+    },
+    {
+      "id": "execution-identity",
+      "domains": [
+        "diagnosis",
+        "integration"
+      ],
+      "trigger": "Only a build, environment or architecture fails.",
+      "question": "Does the inspected source actually match the executing artifact and effective configuration?",
+      "observation": "Match artifact/debug identities and relevant versions/configuration before changing one factor.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/16-hard-to-trace-debugging.md"
+      ]
+    },
+    {
+      "id": "oracle",
+      "domains": [
+        "testing",
+        "contracts"
+      ],
+      "trigger": "Tests and incidents disagree or expected behavior is uncertain.",
+      "question": "Is the correctness detector independent and does the test reach the boundary that fails?",
+      "observation": "Derive expected behavior from the contract; compare real versus substituted semantics and preserve failure signatures.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/16-hard-to-trace-debugging.md"
+      ]
+    },
+    {
+      "id": "observation-history",
+      "domains": [
+        "diagnosis",
+        "testing",
+        "lifecycle"
+      ],
+      "trigger": "Replay fails to reproduce or diagnostics change the result.",
+      "question": "Which prior state, hidden input or observer effect differs between healthy and failing runs?",
+      "observation": "Compare minimal histories, fresh/reused state and bounded scalar observations; retain inconclusive results.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/16-hard-to-trace-debugging.md"
+      ]
+    }
+  ]
+}

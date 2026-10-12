@@ -1,0 +1,13 @@
+{
+  "name": "bug-solver-pro",
+  "version": "1.0.0",
+  "description": "Diagnose and fix application logic bugs using evidence, structured mechanism search, and open-world investigation.",
+  "author": {
+    "name": "Rhyru9",
+    "url": "https://github.com/Rhyru9"
+  },
+  "homepage": "https://github.com/Rhyru9/bug-solver-pro",
+  "repository": "https://github.com/Rhyru9/bug-solver-pro",
+  "license": "MIT",
+  "keywords": ["debugging", "root-cause-analysis", "bug-fixing", "regression", "agent-skills"]
+}

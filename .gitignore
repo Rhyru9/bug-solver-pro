@@ -1,0 +1,15 @@
+# Local agent skill installations and installer state
+.agents/skills/
+.agents/.skill-lock.json
+.claude/skills/
+.codex/skills/
+.hermes/skills/
+skills-lock.json
+
+# Local OS and npm files
+.DS_Store
+node_modules/
+npm-debug.log*
+__pycache__/
+*.pyc
+dist/

@@ -1,0 +1,2 @@
+# Keep text resources and shell helpers portable across checkout platforms.
+* text=auto eol=lf

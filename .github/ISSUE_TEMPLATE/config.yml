@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Installation and usage
+    url: https://github.com/Rhyru9/bug-solver-pro#install-from-github
+    about: Read project/global skill installation and Claude plugin instructions.
+  - name: Agent compatibility
+    url: https://github.com/Rhyru9/bug-solver-pro/blob/main/COMPATIBILITY.md
+    about: Check supported installation targets, native discovery and invocation.

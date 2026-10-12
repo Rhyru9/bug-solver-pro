@@ -1,0 +1,41 @@
+name: Draft release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14'
+      - name: Validate tag, package and catalog
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: python -B scripts/check_package.py --tag "$RELEASE_TAG"
+      - name: Run regression and packaging tests
+        run: python -B -m unittest discover -s tests -v
+      - name: Build release artifacts
+        run: python -B scripts/build_release.py --output-dir dist
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: gh release create "$RELEASE_TAG" dist/*.zip --draft --verify-tag --generate-notes

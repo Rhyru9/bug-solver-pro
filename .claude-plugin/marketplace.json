@@ -1,0 +1,19 @@
+{
+  "name": "rhyru9-skills",
+  "owner": {
+    "name": "Rhyru9",
+    "url": "https://github.com/Rhyru9"
+  },
+  "metadata": {
+    "description": "Agent skills by Rhyru9 for evidence-driven debugging and reliable application fixes."
+  },
+  "plugins": [
+    {
+      "name": "bug-solver-pro",
+      "source": "./",
+      "homepage": "https://github.com/Rhyru9/bug-solver-pro",
+      "repository": "https://github.com/Rhyru9/bug-solver-pro",
+      "description": "Evidence-driven debugging with structured mechanism search and investigation of unrecorded bugs."
+    }
+  ]
+}

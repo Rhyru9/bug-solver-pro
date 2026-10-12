@@ -1,0 +1,860 @@
+{
+  "schema_version": 1,
+  "patterns": [
+    {
+      "id": "duplicate-delivery",
+      "domain": "concurrency",
+      "title": "Duplicate webhook or job effects",
+      "signals": "A retried webhook or redelivered job sends two notifications or creates duplicate records.",
+      "keywords": "webhook job duplicate retry retries redelivery acknowledgement dedupe idempotency notification",
+      "mechanism": "The same logical operation reaches effect creation more than once without an effective deduplication boundary.",
+      "experiment": "In an isolated test replay one operation identity twice, including a lost acknowledgement after the first effect; inspect durable state and effect counts.",
+      "falsifies": "A reliable trace shows distinct legitimate operation identities or exactly one effect for the replayed identity at every relevant boundary.",
+      "verification": "Replay and concurrent delivery must preserve the intended effect count; check payload mismatch and failure after effect commit.",
+      "limits": "At-least-once delivery is a candidate until actual transport and consumer paths are inspected; some repeated operations are legitimate.",
+      "references": [
+        "references/06-concurrency-transactions.md",
+        "references/11-symptom-to-cause.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "check-then-act",
+      "domain": "concurrency",
+      "title": "Concurrent creation or overspending race",
+      "signals": "Parallel requests pass an existence or balance check, then create duplicate rows or overdraw inventory.",
+      "keywords": "parallel concurrent race overspend balance stock inventory constraint unique",
+      "mechanism": "A read/check and subsequent mutation are not protected by the invariant-owning atomic boundary.",
+      "experiment": "Pause two isolated requests immediately after the check, release both, and inspect final rows, balances and effect counts.",
+      "falsifies": "All reachable writers enforce the invariant atomically and the forced overlap cannot violate it; missing overlap evidence is inconclusive.",
+      "verification": "Verify controlled overlap, normal serial behavior and retry/error paths with the actual storage semantics.",
+      "limits": "A lock or constraint is not automatically the right repair; identify isolation, scope, and every writer first.",
+      "references": [
+        "references/06-concurrency-transactions.md",
+        "references/02-root-cause-analysis.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "commit-reply-ambiguity",
+      "domain": "concurrency",
+      "title": "Timeout after an operation committed",
+      "signals": "A caller times out but payment, storage or another external effect has already succeeded; retry repeats it.",
+      "keywords": "timeout payment charge paid committed reply cancellation cancel retry",
+      "mechanism": "The caller loses the outcome after an effect commits and retries as if no effect occurred.",
+      "experiment": "Inject a lost response after commit in isolation, reconcile using the operation identity, then retry and count effects.",
+      "falsifies": "Reliable boundary evidence establishes that no effect committed and the operation stopped before effects were possible.",
+      "verification": "Check unknown-outcome reconciliation, retry identity and success/error/cancel behavior without real external charges.",
+      "limits": "Caller timeout alone establishes neither success nor failure; provider and operation-specific semantics must be verified.",
+      "references": [
+        "references/06-concurrency-transactions.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "commit-publish-gap",
+      "domain": "concurrency",
+      "title": "Saved state but missing notification or event",
+      "signals": "Database state commits but a downstream notification or job is missing after a crash.",
+      "keywords": "commit publish event missing notification outbox crash acknowledgement queue event",
+      "mechanism": "Durable state and event publication have a crash window with no adequate recovery mechanism.",
+      "experiment": "In isolation stop execution between state commit and publish, restart, and check whether the intended event is recovered.",
+      "falsifies": "The relevant state and pending event are durably recorded together and recovery delivers the event; investigate downstream consumption instead.",
+      "verification": "Verify restart recovery, duplicate consumption handling and failed publication; check eventual delivery bounds.",
+      "limits": "An after-commit callback alone does not prove crash-safe delivery; notification absence can also arise downstream.",
+      "references": [
+        "references/06-concurrency-transactions.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "stale-projection",
+      "domain": "state",
+      "title": "Stale cache or replica disagrees with saved data",
+      "signals": "A successful write is followed by an old value or different values from two endpoints.",
+      "keywords": "stale cache replica replication lag outdated freshness invalidation endpoint disagreement",
+      "mechanism": "A read uses a projection whose key, invalidation, update ordering or freshness differs from the authoritative state.",
+      "experiment": "For one isolated write compare authoritative state with each read path and version; bypass one projection at a time.",
+      "falsifies": "The wrong value is already present in authoritative state before projection, or bypassing the inspected projection preserves the failure.",
+      "verification": "Check write/read paths, delayed updates, key scope, refresh behavior and the contractual freshness budget.",
+      "limits": "Stale reads may be allowed; define the freshness contract and avoid clearing caches while also changing other variables.",
+      "references": [
+        "references/05-desync-angles.md",
+        "references/07-data-migrations-cache.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "tenant-state-leak",
+      "domain": "state",
+      "title": "One user sees another tenant data",
+      "signals": "User A receives user B data from a query, cache entry or reused request state.",
+      "keywords": "tenant user data leak isolation authorization scope singleton cache key",
+      "mechanism": "Tenant or user identity is missing from a reachable query, shared-state lifetime or cache partition.",
+      "experiment": "Use two isolated test tenants with distinguishable records; compare identities, scopes and values at query, cache and response boundaries.",
+      "falsifies": "Observed foreign data originates from an explicitly authorized cross-tenant contract and all reachable boundaries preserve its intended scope.",
+      "verification": "Verify two identities in alternating and overlapping requests, including cache hits and relevant privilege boundaries.",
+      "limits": "Do not access real unrelated tenant data or weaken authorization; the suspected boundary must be proven.",
+      "references": [
+        "references/03-blast-radius.md",
+        "references/05-desync-angles.md",
+        "references/11-symptom-to-cause.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "legacy-data-shape",
+      "domain": "state",
+      "title": "Old records fail after migration",
+      "signals": "New records work but old records contain nulls, obsolete status values or unsupported serialized shapes.",
+      "keywords": "legacy migration old records null schema backfill serialized format",
+      "mechanism": "Readers or writers assume a new shape before existing data and mixed deployed versions satisfy it.",
+      "experiment": "Replay sanitized old and new shapes against the same runtime; compare failing fields and test partial migration with active writers.",
+      "falsifies": "The same failure occurs on valid new data before persisted-shape differences are reached.",
+      "verification": "Check old/new shapes, partial runs, resume, mixed-version consumers and data recovery independently of code repair.",
+      "limits": "An old record is not necessarily corrupt; establish compatibility and migration contracts first.",
+      "references": [
+        "references/07-data-migrations-cache.md",
+        "references/08-contracts-and-deploy.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "numeric-representation",
+      "domain": "state",
+      "title": "Incorrect totals or rounding",
+      "signals": "Totals differ from an independent calculation because rows repeat or units, precision or operation order differ.",
+      "keywords": "total totals amount rounding precision decimal float money sum units join",
+      "mechanism": "A calculation changes multiplicity, representation, units or rounding at a boundary.",
+      "experiment": "Calculate an expected result independently from raw fixture data, then compare row multiplicity, units and intermediate values.",
+      "falsifies": "The independent oracle agrees with intermediate and final values for the failing input; revisit the expected business rule.",
+      "verification": "Check rounding boundaries, repeated rows, zero/negative values and representation across serialization.",
+      "limits": "Do not assume floating point is the cause; joins and business-rule differences can produce the same symptom.",
+      "references": [
+        "references/11-symptom-to-cause.md",
+        "references/09-testing-verification.md",
+        "references/14-stack-semantics.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "date-boundary",
+      "domain": "contracts",
+      "title": "Dates shift at timezone or serialization boundaries",
+      "signals": "A date moves by one day or timestamps change when crossing parsing, UTC and local-time boundaries.",
+      "keywords": "date dates timezone utc local dst midnight parsing serialization",
+      "mechanism": "A date-only value or instant is interpreted under different timezone or parsing contracts across boundaries.",
+      "experiment": "Trace the raw value and type through parsing and serialization with fixtures around midnight and relevant offset or DST transitions.",
+      "falsifies": "The value and its date/instant contract remain unchanged through every inspected boundary and the independent expected value agrees.",
+      "verification": "Check date-only versus instant inputs, offsets and relevant calendar transitions against the declared contract.",
+      "limits": "Timezone behavior is version and locale dependent; changing every value to UTC may break a date-only contract.",
+      "references": [
+        "references/10-stack-pitfalls.md",
+        "references/11-symptom-to-cause.md",
+        "references/14-stack-semantics.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "consumer-contract-drift",
+      "domain": "contracts",
+      "title": "Client fails after response contract change",
+      "signals": "An old client fails after a backend changes response fields, types, error codes or ordering.",
+      "keywords": "client frontend response payload field type contract compatibility deployment consumer",
+      "mechanism": "Producer and consumer use incompatible observable contracts during version skew or deployment.",
+      "experiment": "Compare captured old/new sanitized payloads with both consumer versions and inspect the first violated expectation.",
+      "falsifies": "Payloads satisfy the actual consumer contract and failure occurs before or outside the changed boundary.",
+      "verification": "Check old/new consumers and formats, errors and deployment-order compatibility at real serialization boundaries.",
+      "limits": "Tests and current behavior are not automatically authoritative; establish the promised contract before preserving or changing it.",
+      "references": [
+        "references/08-contracts-and-deploy.md",
+        "references/09-testing-verification.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "resource-retention",
+      "domain": "performance",
+      "title": "Memory or handles grow across repeated work",
+      "signals": "Memory grows after repeated requests or session reuse; listeners, connections or handles are retained.",
+      "keywords": "memory heap leak retained retention listener handle connection resource growth",
+      "mechanism": "A lifetime or cleanup path retains resources beyond intended ownership or leaves growth unbounded.",
+      "experiment": "Compare equivalent repeated workloads after warmup; profile retained objects and count handles after success, error and cancellation.",
+      "falsifies": "Resources stabilize within the workload contract and the measured growth is temporary allocation that is reclaimed.",
+      "verification": "Verify bounded steady-state growth and success/error/cancel cleanup under comparable load.",
+      "limits": "One memory snapshot does not establish a leak; caches, workload changes and allocator behavior are alternatives.",
+      "references": [
+        "references/15-evidence-and-experiments.md",
+        "references/16-hard-to-trace-debugging.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "query-amplification",
+      "domain": "performance",
+      "title": "Slow endpoint as data or query count grows",
+      "signals": "Latency grows with returned rows or repeated database queries; workload size differs between healthy and failing cases.",
+      "keywords": "slow latency n1 n+1 query queries database index plan throughput",
+      "mechanism": "Repeated boundary calls, query plans or data growth amplify work or waiting per operation.",
+      "experiment": "For comparable fixtures measure query count and plans plus time spent in CPU, I/O, locks and queues; vary one workload dimension.",
+      "falsifies": "Query work remains bounded and traced latency arises at a different resource or external wait boundary.",
+      "verification": "Compare equivalent workloads and latency distributions while checking output correctness and error rates.",
+      "limits": "Do not assume N+1 or add caching from latency alone; index use and waiting require actual traces/plans.",
+      "references": [
+        "references/11-symptom-to-cause.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "shared-test-state",
+      "domain": "testing",
+      "title": "Flaky tests depend on order or residual state",
+      "signals": "A test passes alone but fails after another test or with parallel execution, time or shared fixtures.",
+      "keywords": "flaky test tests order isolation fixture clock random shared residual state flakiness",
+      "mechanism": "A test depends on uncontrolled time, order or shared state that changes its preconditions.",
+      "experiment": "Run the failing test alone and after a minimal predecessor sequence using controlled clocks and isolated data; preserve the failure signature.",
+      "falsifies": "The same reliable failure occurs with equivalent isolated state and controlled ordering; investigate the application path or test oracle.",
+      "verification": "Check isolated and sequence runs, cleanup and meaningful concurrency; avoid replacing the failing boundary with mocks.",
+      "limits": "Random repetition alone does not localize a cause; a passing run is not proof that flakiness is fixed.",
+      "references": [
+        "references/09-testing-verification.md",
+        "references/16-hard-to-trace-debugging.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "deployment-mismatch",
+      "domain": "diagnosis",
+      "title": "Works locally but fails after deployment",
+      "signals": "The failing environment runs a different artifact, dependency, flag or effective configuration than the healthy environment.",
+      "keywords": "production local deployment artifact build version config environment env flag works",
+      "mechanism": "Different executing artifacts or effective runtime conditions change the failing path or its semantics.",
+      "experiment": "Compare build identity, runtime versions and relevant effective configuration between healthy and failing executions before changing one variable.",
+      "falsifies": "Equivalent artifacts and relevant conditions reach the same path but outcomes still differ; examine state, load and timing.",
+      "verification": "Verify the repaired path under the actual relevant runtime conditions and separate deployment, migration and recovery work.",
+      "limits": "Deployment correlation is not causal evidence; do not collect secrets or assume source files match running artifacts.",
+      "references": [
+        "references/01-code-mapping.md",
+        "references/13-research-adaptive.md",
+        "references/14-stack-semantics.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "patch-chain",
+      "domain": "diagnosis",
+      "title": "A fix introduces another symptom",
+      "signals": "Fix A is followed by symptom B or repeated patches change symptoms without new causal evidence.",
+      "keywords": "regression patch fixes chain second symptom coupling fix introduces",
+      "mechanism": "A patch changes a shared invariant or exposes another path; the new symptom may also be independent.",
+      "experiment": "Compare before/after in an isolated workspace with user changes preserved; trace both symptoms to the first differing invariant.",
+      "falsifies": "The new symptom reproduces unchanged on the baseline without reaching the patch, suggesting a pre-existing or independent issue.",
+      "verification": "Check original and newly reachable behavior plus affected callers; remove speculative changes without deleting user work.",
+      "limits": "Temporal order alone does not prove regression; combine fixes only when a shared mechanism is supported.",
+      "references": [
+        "references/04-anti-fix-chain.md",
+        "references/03-blast-radius.md",
+        "references/16-hard-to-trace-debugging.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "missing-empty-confusion",
+      "domain": "representation",
+      "title": "Missing, null, empty and zero are conflated",
+      "signals": "An optional value disappears, a zero is replaced by a default, or an empty field behaves as missing.",
+      "keywords": "missing null empty zero false boolean truthiness optional default omission coercion",
+      "mechanism": "A conversion or defaulting rule merges input states the contract distinguishes.",
+      "experiment": "Trace absent, null, empty, zero and false fixtures separately through validation, mapping and serialization.",
+      "falsifies": "All relevant distinct states survive the conversions correctly and failure occurs elsewhere.",
+      "verification": "Verify each contractually distinct state and rejected inputs with an independent expected-value table.",
+      "limits": "Some contracts intentionally normalize these states; establish their meaning before changing defaults.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "unicode-normalization",
+      "domain": "representation",
+      "title": "Equivalent-looking text compares differently",
+      "signals": "Visually identical identifiers fail lookup, names collide, or text is corrupted at an encoding boundary.",
+      "keywords": "unicode normalization encoding utf8 characters text bytes casefold accent locale identifier mojibake",
+      "mechanism": "Different encodings, normalization or case rules change identity across boundaries.",
+      "experiment": "Compare code points and raw bytes for failing and healthy fixtures before and after each transformation.",
+      "falsifies": "Representations and comparison rules agree at the failing boundary; inspect unrelated lookup state.",
+      "verification": "Check composed/decomposed text, case-sensitive identities and serialization against the intended contract.",
+      "limits": "Normalization can change valid identity semantics; do not normalize every field automatically.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "integer-overflow",
+      "domain": "representation",
+      "title": "Large values wrap, truncate or change sign",
+      "signals": "A large identifier or count becomes negative, wraps, or loses precision after conversion.",
+      "keywords": "integer overflow underflow signed unsigned truncation precision narrowing large boundary cast",
+      "mechanism": "A numeric value exceeds a representation range or narrows across a conversion.",
+      "experiment": "Replay values around the actual type boundaries and inspect exact values before and after casts or serialization.",
+      "falsifies": "Values are representable and unchanged at every relevant conversion; inspect the producing arithmetic.",
+      "verification": "Check minimum/maximum boundaries and large identifiers using the actual runtime and consumer types.",
+      "limits": "Numeric ranges and overflow behavior depend on type and runtime; never assume a universal bit width.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "aliasing-mutation",
+      "domain": "lifecycle",
+      "title": "Changing one object unexpectedly changes another",
+      "signals": "Two objects share a mutable child, a copied record changes later, or an iterator sees mutations.",
+      "keywords": "alias aliasing mutation shallow copy reference shared object mutable child snapshot",
+      "mechanism": "A supposedly independent value aliases mutable state owned by another path.",
+      "experiment": "Track object identities and writers, then compare shallow and isolated ownership in a controlled fixture.",
+      "falsifies": "Values are independent at relevant ownership boundaries and the unexpected write has another source.",
+      "verification": "Check mutation of nested values, delayed consumers and supported copy semantics.",
+      "limits": "Copying every object may break identity contracts or performance; repair the actual ownership boundary.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "use-after-release",
+      "domain": "lifecycle",
+      "title": "Resource used after release or invalidation",
+      "signals": "A callback accesses a closed connection, disposed object, freed buffer or expired borrowed reference.",
+      "keywords": "use after free release disposed closed dangling lifetime callback buffer ownership crash",
+      "mechanism": "A consumer outlives the resource owner or uses a resource after its lifetime ends.",
+      "experiment": "Trace acquisition, ownership, callbacks and disposal; force the suspected lifecycle ordering in isolation.",
+      "falsifies": "The resource remains valid under the actual lifetime contract for every observed consumer.",
+      "verification": "Check normal completion, cancellation, error and late callbacks with supported diagnostics.",
+      "limits": "A crash alone does not prove lifetime misuse; use actual runtime or native diagnostics when available.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "session-state-reuse",
+      "domain": "lifecycle",
+      "title": "Fresh session works but reused session fails",
+      "signals": "The identical request fails only after prior work on a pooled connection or reused session.",
+      "keywords": "session reuse reused pool pooled connection reset fresh warm history retained request state",
+      "mechanism": "State intended for one operation survives into a later operation with different assumptions.",
+      "experiment": "Compare fresh and reused sessions while replaying the minimal predecessor sequence and recording state resets.",
+      "falsifies": "Equivalent fresh and reused state fail identically before any persistent session difference.",
+      "verification": "Verify consecutive operations, cleanup after failures and session reuse without restarting between checks.",
+      "limits": "A restart can hide the trigger without repairing the owner or reset logic.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "initialization-order",
+      "domain": "lifecycle",
+      "title": "Dependency used before initialization",
+      "signals": "Startup intermittently uses an unset dependency or a callback fires before registration completes.",
+      "keywords": "startup initialization initialized registration readiness init constructor dependency boot ordering",
+      "mechanism": "A path becomes reachable before its required dependencies or lifecycle state are ready.",
+      "experiment": "Record readiness transitions and force startup/callback ordering in an isolated boot sequence.",
+      "falsifies": "Every prerequisite is established before the failing path becomes reachable.",
+      "verification": "Check cold start, concurrent startup and initialization failure behavior.",
+      "limits": "Adding arbitrary delays is not evidence of readiness or a repair of dependency ordering.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "cleanup-masks-failure",
+      "domain": "lifecycle",
+      "title": "Cleanup hides the original failure",
+      "signals": "A close, rollback or disposal exception replaces the earlier exception or skips another release.",
+      "keywords": "cleanup finally disposal close rollback original exception suppressed masked failure",
+      "mechanism": "Cleanup overwrites the initiating error or interrupts required release paths.",
+      "experiment": "Inject distinct primary and cleanup failures in isolation, retaining both causes and resource state.",
+      "falsifies": "The original cause is preserved and all required release paths execute despite cleanup errors.",
+      "verification": "Check success, primary failure, cleanup failure and cancellation with resource counts.",
+      "limits": "Error composition and disposal semantics differ by runtime; inspect the actual contract.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "unawaited-work",
+      "domain": "control-flow",
+      "title": "Caller returns before asynchronous work completes",
+      "signals": "An async loop reports success before writes finish or background failures are never observed.",
+      "keywords": "async await unawaited promise task future forEach parallel completion background deferred",
+      "mechanism": "The parent reports completion without observing required child completion and failure.",
+      "experiment": "Hold a child at a barrier, inspect whether the parent completes, then inject a child failure.",
+      "falsifies": "The parent observes every required child outcome before reporting success.",
+      "verification": "Check child completion, errors, cancellation and required result ordering.",
+      "limits": "Detached work may be intentional; establish who owns completion and errors first.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "swallowed-failure",
+      "domain": "control-flow",
+      "title": "Failure converted into success or a default value",
+      "signals": "A failed operation returns an empty result or success because a handler drops the original error.",
+      "keywords": "swallowed exception catch except fallback silent success default failure empty result",
+      "mechanism": "An error path removes the failure signal required by its caller or substitutes an invalid default.",
+      "experiment": "Inject a recognizable failure at the suspected boundary and follow its representation to the consumer.",
+      "falsifies": "The consumer receives the promised failure signal and handles it according to contract.",
+      "verification": "Check success and each relevant failure path, including effect state after partial completion.",
+      "limits": "Fallbacks can be valid; demonstrate that the fallback violates the requested behavior.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "invalid-state-transition",
+      "domain": "control-flow",
+      "title": "Workflow enters an impossible or stuck state",
+      "signals": "A status changes out of order, a completed action reopens, or a failed transition leaves work stuck.",
+      "keywords": "state transition workflow status stuck terminal guard compensation reopen illegal event",
+      "mechanism": "A reachable transition bypasses its state invariant or omits required recovery.",
+      "experiment": "Replay the transition sequence with duplicates, late events and a failure between state and effect updates.",
+      "falsifies": "Every reached transition is permitted and recovery completes within its promised conditions.",
+      "verification": "Check permitted/rejected transitions, repeated events and failure recovery.",
+      "limits": "State names alone do not define valid transitions; use the domain contract.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "pagination-instability",
+      "domain": "control-flow",
+      "title": "Pagination duplicates or skips records",
+      "signals": "Adjacent pages overlap or miss rows when equal sort keys, updates or inserts occur.",
+      "keywords": "pagination cursor page offset ordering sort duplicate skip records tie stable",
+      "mechanism": "The pagination boundary lacks a stable ordering or cursor/snapshot contract.",
+      "experiment": "Page through tied sort keys while applying controlled inserts and updates; compare IDs against the promised snapshot.",
+      "falsifies": "Stable identity ordering and the contractually defined view cover each expected item exactly once.",
+      "verification": "Check ties, first/last page, changed data and cursor encoding with an independent ID set.",
+      "limits": "Some live feeds allow changes between pages; establish snapshot versus live-view expectations.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "off-by-one-boundary",
+      "domain": "control-flow",
+      "title": "Loop or range misses an edge element",
+      "signals": "The first or last element is missing, an empty range fails, or an inclusive bound is treated as exclusive.",
+      "keywords": "off by one index bounds inclusive exclusive loop range empty first last array",
+      "mechanism": "Range or index arithmetic differs from the intended boundary contract.",
+      "experiment": "Use empty, singleton and exact-boundary fixtures, recording iteration indices and accessed elements.",
+      "falsifies": "Every intended element and valid boundary is covered without invalid access.",
+      "verification": "Check empty, one-element, maximum-length and boundary inputs using an independent expected set.",
+      "limits": "A boundary symptom may come from filtering or pagination rather than index arithmetic.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "nonterminating-progress",
+      "domain": "control-flow",
+      "title": "Loop never advances toward completion",
+      "signals": "A retry loop, parser or traversal repeats the same state or cycles indefinitely.",
+      "keywords": "infinite loop hang termination progress cycle recursion visited retry parser advances",
+      "mechanism": "A reachable iteration neither changes the progress measure nor exits under its stop condition.",
+      "experiment": "Trace a bounded number of state transitions and inspect the progress measure for a minimal failing input.",
+      "falsifies": "Each transition advances or exits under the intended invariant; inspect external waiting instead.",
+      "verification": "Check empty input, cycles, invalid input and stop conditions with bounded execution.",
+      "limits": "Slow progress is not nontermination; distinguish finite work and unavailable external dependencies.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "partial-stream-framing",
+      "domain": "integration",
+      "title": "Split or combined stream messages parse incorrectly",
+      "signals": "A parser works for one read per message but fails when messages split across reads or arrive together.",
+      "keywords": "stream framing partial chunk packet split fragmented coalesced message bytes parser buffer",
+      "mechanism": "Transport reads are treated as complete application messages without correct framing and buffer state.",
+      "experiment": "Feed the same byte sequence under varied chunk boundaries and combined frames, retaining the intended message contract.",
+      "falsifies": "All legal chunkings produce identical frames and the error is introduced after framing.",
+      "verification": "Check fragmentation, multiple frames, truncated EOF and bounded buffering.",
+      "limits": "Use the actual protocol framing rules; not every transport has stream semantics.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "truncated-write",
+      "domain": "integration",
+      "title": "Output is truncated after an incomplete write",
+      "signals": "Only part of a file or network payload is written, or a success count is ignored.",
+      "keywords": "short partial write send bytes length truncated output flush file io network",
+      "mechanism": "The producer assumes one write consumed the whole buffer or ignores a failing completion.",
+      "experiment": "Use an isolated writer returning short counts and errors; compare accepted bytes with expected output.",
+      "falsifies": "Every completion count is handled correctly and the full output reaches the intended boundary.",
+      "verification": "Check short writes, empty buffers, mid-write failures and flush/close semantics.",
+      "limits": "Write contracts differ by API; verify whether partial counts are possible on the actual path.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "external-retry-policy",
+      "domain": "integration",
+      "title": "Retries violate dependency limits or repeat unsafe work",
+      "signals": "An external API is retried after a permanent rejection or ignoring its rate-limit contract.",
+      "keywords": "retry retries external api rate limit quota backoff permanent transient status dependency",
+      "mechanism": "Retry classification, identity or scheduling conflicts with the external operation contract.",
+      "experiment": "Replay representative responses using test endpoints; inspect attempts, operation identity and promised retry timing.",
+      "falsifies": "Retries comply with documented outcomes and limits while failure occurs at a different boundary.",
+      "verification": "Check permanent/transient failures, retry exhaustion, unknown outcome and permitted recovery.",
+      "limits": "Do not induce real rate limits or external effects; exact policy is provider and version dependent.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "native-abi-mismatch",
+      "domain": "integration",
+      "title": "Native boundary disagrees on layout or ownership",
+      "signals": "An FFI call corrupts values or crashes only on one architecture or library build.",
+      "keywords": "ffi native abi alignment layout struct calling convention architecture symbol binding marshalling",
+      "mechanism": "Caller and callee disagree on type layout, calling convention or resource ownership.",
+      "experiment": "Compare actual symbols, type sizes/layouts and calling conventions against a minimal isolated native-boundary fixture.",
+      "falsifies": "Boundary definitions and ownership agree and corruption is already present before the call.",
+      "verification": "Check relevant builds/architectures, error returns and lifetime with supported diagnostics.",
+      "limits": "Architecture correlation alone is not proof; compiler, artifact and data differences also matter.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "lost-update",
+      "domain": "concurrency",
+      "title": "Concurrent edits overwrite each other",
+      "signals": "Two readers update the same value and one successful change disappears.",
+      "keywords": "lost update overwrite concurrent edit version compare swap optimistic increment counter",
+      "mechanism": "A stale read is written back without an effective conflict or atomic update boundary.",
+      "experiment": "Pause two writers after reading the same version, then release both and inspect versions and final state.",
+      "falsifies": "The actual boundary detects conflicts or atomically preserves both permitted updates.",
+      "verification": "Check overlapping writers, retry behavior and conflict reporting using the real storage engine.",
+      "limits": "Not all conflicting edits can be merged; establish conflict policy instead of assuming commutativity.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "deadlock-lock-order",
+      "domain": "concurrency",
+      "title": "Operations wait on each other and stop progressing",
+      "signals": "Two operations hold resources the other needs, or nested lock acquisition blocks completion.",
+      "keywords": "deadlock lock ordering cycle wait mutex nested transaction thread synchronization",
+      "mechanism": "The resource wait graph contains a cycle or an unresolvable self-dependency.",
+      "experiment": "Capture resource ownership and waits, then force the suspected acquisition sequence in isolation.",
+      "falsifies": "No wait cycle exists and a single external wait or finite contention explains the observed stall.",
+      "verification": "Check acquisition ordering, failure release and forward progress under controlled overlap.",
+      "limits": "Timeouts and slow contention are not automatically deadlocks; build the actual wait graph.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "out-of-order-write",
+      "domain": "concurrency",
+      "title": "Older asynchronous result replaces newer state",
+      "signals": "A delayed request or event overwrites a more recent result or sequence.",
+      "keywords": "out order older newer response stale async event sequence monotonic version late update",
+      "mechanism": "Completion order is used as logical freshness without an ordering or version invariant.",
+      "experiment": "Force the older operation to finish after the newer one and inspect identities, versions and final state.",
+      "falsifies": "The boundary preserves intended version order and late completions cannot overwrite newer state.",
+      "verification": "Check reverse completion, repeated sequence values and cancelled work.",
+      "limits": "Latest completion and latest logical operation may have different contracts.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "partial-batch",
+      "domain": "state",
+      "title": "Batch fails after some mutations succeed",
+      "signals": "A multi-record operation reports failure while a subset remains updated; retry repeats earlier changes.",
+      "keywords": "partial batch bulk transaction atomicity rollback subset multi record commit",
+      "mechanism": "The logical batch crosses atomicity boundaries or lacks a defined partial-success recovery contract.",
+      "experiment": "Inject a failure after a selected item and inspect all state/effects before and after a retry.",
+      "falsifies": "The batch either rolls back fully or exposes recoverable partial success as promised.",
+      "verification": "Check every relevant failure boundary, retry/resume behavior and existing partial data.",
+      "limits": "Not every batch must be atomic; establish atomic versus per-item semantics first.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "durability-gap",
+      "domain": "state",
+      "title": "Acknowledged data disappears after restart",
+      "signals": "A write reports success but data is missing after a crash, restart or failover.",
+      "keywords": "durability durable acknowledged flush fsync restart crash failover persistent lost write",
+      "mechanism": "The success boundary occurs before the required durability boundary or targets a different storage owner.",
+      "experiment": "In disposable storage compare acknowledged state before and after a controlled restart using the actual durability configuration.",
+      "falsifies": "Acknowledged state survives under the promised failure model and missing data is due to a later write or read path.",
+      "verification": "Check acknowledgement semantics, durable identity and supported recovery behavior.",
+      "limits": "Do not power-cycle or crash production; durability guarantees depend on storage and failure model.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "pool-exhaustion",
+      "domain": "performance",
+      "title": "Requests stall waiting for pooled resources",
+      "signals": "Connection or worker acquisition waits grow while a pool reaches capacity.",
+      "keywords": "pool exhaustion connection worker acquire wait queue capacity backpressure saturated",
+      "mechanism": "Capacity or release behavior leaves work waiting without sufficient progress or admission control.",
+      "experiment": "Measure held resources, waiters and release paths under a bounded equivalent workload with success/error/cancel cases.",
+      "falsifies": "Capacity remains available and traced delay occurs after acquisition.",
+      "verification": "Check progress, bounded queues, release behavior and success/error rates under comparable load.",
+      "limits": "Increasing pool size can move the bottleneck or overload a downstream dependency.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "scheduler-starvation",
+      "domain": "performance",
+      "title": "Required tasks never receive execution time",
+      "signals": "Timers or callbacks stop responding during CPU work or blocking operations on a shared scheduler.",
+      "keywords": "scheduler starvation event loop blocking fairness thread cpu timer callback responsiveness",
+      "mechanism": "Work occupies shared execution capacity so required tasks cannot make timely progress.",
+      "experiment": "Measure runnable versus blocked work and callback delays while isolating the suspected blocking path.",
+      "falsifies": "Execution capacity is available and delays arise from an external wait or queue before scheduling.",
+      "verification": "Check responsiveness, throughput and correctness under a comparable workload.",
+      "limits": "Scheduling models differ; do not infer event-loop behavior from a language name.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "algorithmic-growth",
+      "domain": "performance",
+      "title": "Work grows disproportionately with input",
+      "signals": "Input doubling causes excessive comparisons, recursion, allocation or parsing work.",
+      "keywords": "complexity quadratic exponential algorithm growth input size regex backtracking recursion workload",
+      "mechanism": "The actual algorithm amplifies work faster than the workload contract permits.",
+      "experiment": "Vary one input dimension in bounded fixtures and measure operation counts as well as elapsed time.",
+      "falsifies": "Measured work scales within expected bounds and waits or resource limits explain latency.",
+      "verification": "Check equivalent outputs, edge cases and resource bounds across representative input sizes.",
+      "limits": "Small stopwatch samples do not establish complexity; preserve the same execution path.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "incorrect-oracle",
+      "domain": "testing",
+      "title": "Expected test result contradicts the contract",
+      "signals": "Tests pass an incorrect formula or fail a valid change because expectations reuse implementation logic.",
+      "keywords": "oracle expected expectation test tautology snapshot requirement specification independent formula",
+      "mechanism": "The correctness detector encodes the wrong requirement or cannot distinguish the faulty behavior.",
+      "experiment": "Derive expected behavior independently from the authoritative contract and compare it with test and implementation outputs.",
+      "falsifies": "The independent contract supports the existing oracle and the implementation violates it.",
+      "verification": "Check a failing example and meaningful counterexamples without weakening a correct safeguard.",
+      "limits": "Ambiguous requirements require a decision; never rewrite expected values just to pass tests.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "mocked-boundary-gap",
+      "domain": "testing",
+      "title": "Mocks hide the failing integration semantics",
+      "signals": "Unit tests pass while the real database, serializer or provider follows different behavior.",
+      "keywords": "mock mocked stub fake integration transaction serializer provider semantics tests pass",
+      "mechanism": "The substituted boundary omits the behavior that causes the real failure.",
+      "experiment": "Replay a minimal failing path against the actual relevant boundary in an isolated environment and compare the substitute.",
+      "falsifies": "The substitute preserves the relevant semantics and the divergence occurs elsewhere.",
+      "verification": "Verify the mechanism at its real boundary and retain contained tests for unrelated effects.",
+      "limits": "Removing every mock is unnecessary; only observe the boundary relevant to the failure.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "observer-effect",
+      "domain": "diagnosis",
+      "title": "Logging or debugging changes the failure",
+      "signals": "A race or lazy-load error disappears when tracing, inspecting an object or attaching a debugger.",
+      "keywords": "observer observation logging debugger instrumentation heisenbug lazy getter inspection timing",
+      "mechanism": "Observation changes timing, evaluation, locking or lifetime needed by the failure.",
+      "experiment": "Compare equivalent runs with bounded scalar observations and with the intrusive observer, recording path and overhead differences.",
+      "falsifies": "The observer leaves relevant execution conditions unchanged and another controlled factor explains the difference.",
+      "verification": "Verify the original uninstrumented path after repair and retain necessary evidence with stated limits.",
+      "limits": "Disappearance while logging is not a repair and missing traces do not prove absence.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "source-artifact-mapping",
+      "domain": "diagnosis",
+      "title": "Trace points to source that is not executing",
+      "signals": "A stack line, generated file or source map points at a different build than the failing binary.",
+      "keywords": "source map sourcemap symbols debug generated artifact line stack binary build mismatch",
+      "mechanism": "Source-to-artifact mapping is stale or resolves to a different generated/deployed implementation.",
+      "experiment": "Match artifact hashes and debug/source-map identities, then verify one observed instruction or transformation against resolved source.",
+      "falsifies": "The mapping matches the executing artifact at the failing boundary.",
+      "verification": "Check the repaired artifact and its diagnostics, not merely edited source files.",
+      "limits": "Do not infer runtime behavior solely from repository manifests or displayed line numbers.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "authorization-boundary",
+      "domain": "security",
+      "title": "An alternate path bypasses an access decision",
+      "signals": "A protected action works through a secondary route or authorization is checked against the wrong resource.",
+      "keywords": "authorization access permission role policy bypass route resource identity privilege denied allowed",
+      "mechanism": "A reachable operation does not enforce its authorization contract at the invariant owner.",
+      "experiment": "Using isolated identities and fixtures compare equivalent operations through each relevant entrypoint and inspect decision inputs.",
+      "falsifies": "Every reached entrypoint enforces the intended resource and actor policy before effects.",
+      "verification": "Check allowed and denied actors, alternate paths and side effects without weakening guards.",
+      "limits": "This is a debugging prompt, not authorization for a broad security audit or real privilege escalation.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "canonicalization-boundary",
+      "domain": "security",
+      "title": "Validation and use interpret the same input differently",
+      "signals": "A path or identifier passes validation but decoding or normalization changes its meaning before use.",
+      "keywords": "canonicalization validation decode normalize path identifier traversal interpretation boundary",
+      "mechanism": "Validation and the consuming boundary apply incompatible representations or trust rules.",
+      "experiment": "Trace sanitized boundary fixtures through validation and use, including encoded and normalized equivalents in isolation.",
+      "falsifies": "Validation evaluates the exact representation and authority used by the consuming boundary.",
+      "verification": "Check accepted/rejected representations and intended resource scope at actual use.",
+      "limits": "Do not weaken validation or test unauthorized resources; establish the consuming contract first.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "credential-scope-reuse",
+      "domain": "security",
+      "title": "Reused credential state applies to the wrong operation",
+      "signals": "An expired or previous identity remains attached to a pooled client after credential refresh or sign-out.",
+      "keywords": "credential token authentication expired refresh identity signout client scope reused session",
+      "mechanism": "Credential lifecycle or scope is reused beyond its intended actor, audience or validity boundary.",
+      "experiment": "Use disposable identities to trace effective actor/audience and refresh/sign-out transitions across reused clients.",
+      "falsifies": "Every operation uses the intended valid identity and the rejection originates outside credential scope.",
+      "verification": "Check refresh, expiry, identity switch and failed refresh without exposing credentials.",
+      "limits": "Token validity is provider-specific; do not print secrets or change policy to suppress failures.",
+      "references": [
+        "references/18-coverage-and-unknowns.md",
+        "references/14-stack-semantics.md",
+        "references/15-evidence-and-experiments.md"
+      ],
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

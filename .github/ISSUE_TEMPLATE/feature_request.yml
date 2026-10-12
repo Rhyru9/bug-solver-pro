@@ -1,0 +1,42 @@
+name: Feature request
+description: Suggest improvements to investigation, retrieval, tooling, or agent compatibility
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Propose an improvement to [Rhyru9/bug-solver-pro](https://github.com/Rhyru9/bug-solver-pro). Check the [current usage and capabilities](https://github.com/Rhyru9/bug-solver-pro#structured-diagnostic-tooling) first; use the diagnostic coverage gap template for missing or misleading mechanisms.
+  - type: dropdown
+    id: category
+    attributes:
+      label: Improvement area
+      options:
+        - Investigation workflow or unknown-bug exploration
+        - Retrieval or structured catalog
+        - Python or shell tooling
+        - Agent compatibility or installation
+        - Tests or package distribution
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this address?
+      description: Describe the observable gap and a sanitized example. Do not include secrets or private source.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior and scope
+    validations:
+      required: true
+  - type: textarea
+    id: success
+    attributes:
+      label: How could we verify the improvement?
+      description: Include a correctness oracle, representative queries or installation checks, and relevant limits.
+    validations:
+      required: true

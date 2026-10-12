@@ -1,0 +1,46 @@
+name: Diagnostic coverage gap
+description: Report an unrecorded mechanism, a misleading match, or a missing investigation angle
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A catalog match is not a proven cause. Report unknown mechanisms and wrong matches here. Sanitized synthetic reproductions are useful, but label them clearly; do not present them as verified incidents.
+        Source: [Rhyru9/bug-solver-pro](https://github.com/Rhyru9/bug-solver-pro). Review [coverage and unknown mechanisms](https://github.com/Rhyru9/bug-solver-pro/blob/main/skills/bug-solver-pro/references/18-coverage-and-unknowns.md) when describing the gap.
+  - type: textarea
+    id: symptom
+    attributes:
+      label: Observed symptom and context
+      description: Relevant versions, inputs, history and failing versus healthy conditions.
+    validations:
+      required: true
+  - type: textarea
+    id: retrieval
+    attributes:
+      label: Query, selected domain and returned results
+      description: Include matched / weak_match / no_match output, or say that search was not used.
+    validations:
+      required: true
+  - type: dropdown
+    id: evidence_kind
+    attributes:
+      label: Evidence type
+      options:
+        - Observed incident with causal evidence
+        - Controlled synthetic reproduction
+        - Documented contract only
+        - Hypothesis not yet confirmed
+    validations:
+      required: true
+  - type: textarea
+    id: mechanism
+    attributes:
+      label: Candidate mechanism and distinguishing experiment
+      description: Include a prediction, a falsifying observation and current evidence limits. Unknown causes are acceptable.
+    validations:
+      required: true
+  - type: textarea
+    id: applicability
+    attributes:
+      label: Applicability, counterexamples and references
+      description: Where does the proposed guidance apply, and where would it mislead? Include public sources when available.

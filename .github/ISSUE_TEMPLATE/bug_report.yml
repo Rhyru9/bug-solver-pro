@@ -1,0 +1,68 @@
+name: Bug report
+description: Report broken skill behavior, retrieval, helpers, or installation in bug-solver-pro
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Report a problem with bug-solver-pro itself. Include sanitized evidence; omit secrets, customer data and private source code.
+        Check the [installation guide](https://github.com/Rhyru9/bug-solver-pro#install-from-github) and [agent compatibility](https://github.com/Rhyru9/bug-solver-pro/blob/main/COMPATIBILITY.md) before reporting a loading problem.
+  - type: input
+    id: agent
+    attributes:
+      label: Agent and version
+      placeholder: Claude Code, Codex, Copilot CLI, OpenClaw, Hermes Agent, or another host
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Skill version or commit
+      description: Plugin version, release tag or source commit. Write unknown if unavailable.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: OS and relevant tool versions
+      placeholder: macOS / Linux / Windows; Python, Bash, Git or Skills CLI versions if relevant
+    validations:
+      required: true
+  - type: dropdown
+    id: installation
+    attributes:
+      label: Installation route
+      options:
+        - npx skills - project
+        - npx skills - global
+        - Claude Code plugin / marketplace
+        - Manual copy or native host installer
+        - Source checkout
+        - Other or unknown
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Exact steps, sanitized query or prompt
+      description: Include the command, working directory context and whether the skill loaded. If reproduction is unavailable, explain what was observed.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior and its basis
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and impact
+      description: Include incorrect diagnoses, unsupported claims, missed references or helper failures when relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized logs, outputs and healthy comparison
+      description: Distinguish observations from suspected causes. Redact sensitive data.
