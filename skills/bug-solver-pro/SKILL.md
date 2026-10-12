@@ -12,7 +12,7 @@ Purpose: produce fixes that explain the failure mechanism, preserve behavior tha
 
 For unclear symptoms, the bundled catalog offers candidate mechanisms and discriminating experiments in eleven domains: `concurrency`, `state`, `contracts`, `performance`, `testing`, `diagnosis`, `representation`, `lifecycle`, `control-flow`, `integration`, and `security`. It is optional for a local bug whose mechanism is already clear. Security angles apply to the reported bug and its relevant impact; they do not expand the request into a broad security audit.
 
-Resolve `<skill-root>` to the folder containing this installed `SKILL.md`; do not assume the user's project contains the scripts or a particular agent environment variable exists. Requires Python 3.9+ with no external packages:
+Resolve `<skill-root>` to the folder containing this installed `SKILL.md`; do not assume the user's project contains the scripts or a particular agent environment variable exists. Requires Python 3.9+ with no external packages. If `python3` is missing, use `python` or `py -3` with the same arguments:
 
 ```bash
 python3 "<skill-root>/scripts/search.py" "duplicate webhook retry" --domain concurrency
@@ -82,6 +82,7 @@ Stop adding speculative patches; continue investigation. Compare before/after in
 | Adapt to unfamiliar languages/frameworks/libraries | [14-stack-semantics](references/14-stack-semantics.md) |
 | Choose experiments; intermittent failures, crashes, performance | [15-evidence-and-experiments](references/15-evidence-and-experiments.md) |
 | Misleading traces, hidden state, rare bugs, stalled diagnosis | [16-hard-to-trace-debugging](references/16-hard-to-trace-debugging.md) |
+| Search catalog, `--plan`, `--explore`, schema | [17-structured-tooling](references/17-structured-tooling.md) |
 | Unrecorded mechanisms, partial matches, conflicting evidence, coverage gaps | [18-coverage-and-unknowns](references/18-coverage-and-unknowns.md) |
 
 [Templates](templates/investigation-notes.md) are optional aids; use only relevant sections. [Learned cases](references/learned-cases.md) retain cases with evidence and context.

@@ -21,9 +21,19 @@ WORK_DIR=$(mktemp -d "${TMPDIR:-/tmp}/bug-solver-pro-usages.XXXXXX")
 trap 'rm -rf "$WORK_DIR"' EXIT
 
 if command -v rg >/dev/null 2>&1; then
-  SEARCH() { rg -n --hidden --glob '!.git' --glob '!node_modules' --glob '!vendor' --glob '!dist' --glob '!build' --glob '!*.lock' "$@"; }
+  SEARCH() {
+    rg -n --glob '!.git' --glob '!node_modules' --glob '!vendor' --glob '!dist' --glob '!build' \
+      --glob '!.venv' --glob '!venv' --glob '!.ssh' --glob '!.aws' \
+      --glob '!.env' --glob '!.env.*' --glob '!*.pem' --glob '!*.p12' --glob '!id_rsa' --glob '!id_rsa.*' \
+      --glob '!*secret*' --glob '!*credential*' --glob '!.netrc' --glob '!.npmrc' --glob '!*.lock' "$@"
+  }
 else
-  SEARCH() { grep -rnI --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=vendor --exclude-dir=dist --exclude-dir=build "$@"; }
+  SEARCH() {
+    grep -rnI --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=vendor --exclude-dir=dist \
+      --exclude-dir=build --exclude-dir=.venv --exclude-dir=venv --exclude-dir=.ssh --exclude-dir=.aws \
+      --exclude='.env' --exclude='.env.*' --exclude='*.pem' --exclude='*.p12' --exclude='id_rsa' \
+      --exclude='*secret*' --exclude='*credential*' --exclude='.netrc' --exclude='.npmrc' "$@"
+  }
 fi
 
 # 1 means no match. Other failures must not be turned into '(none)'.

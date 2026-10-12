@@ -24,12 +24,20 @@ fi
 
 search() {
   # $1 = regex pattern (ERE). Output: file:line:text
+  # Skip hidden files (rg default) and credential-like names so scan output is safe to paste.
   if command -v rg >/dev/null 2>&1; then
-    "$TIMEOUT_CMD" 30 rg -n --hidden --glob '!.git' --glob '!node_modules' --glob '!vendor' \
-      --glob '!dist' --glob '!build' --glob '!*.lock' --glob '!*.min.*' -e "$1" "$DIR" </dev/null
+    "$TIMEOUT_CMD" 30 rg -n --glob '!.git' --glob '!node_modules' --glob '!vendor' \
+      --glob '!dist' --glob '!build' --glob '!.venv' --glob '!venv' --glob '!.ssh' --glob '!.aws' \
+      --glob '!.env' --glob '!.env.*' --glob '!*.pem' --glob '!*.p12' --glob '!id_rsa' --glob '!id_rsa.*' \
+      --glob '!*secret*' --glob '!*credential*' --glob '!.netrc' --glob '!.npmrc' \
+      --glob '!*.lock' --glob '!*.min.*' -e "$1" "$DIR" </dev/null
   else
     "$TIMEOUT_CMD" 30 grep -rnIE --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=vendor \
-      --exclude-dir=dist --exclude-dir=build --exclude='*.lock' --exclude='*.min.*' -e "$1" "$DIR" </dev/null
+      --exclude-dir=dist --exclude-dir=build --exclude-dir=.venv --exclude-dir=venv \
+      --exclude-dir=.ssh --exclude-dir=.aws \
+      --exclude='.env' --exclude='.env.*' --exclude='*.pem' --exclude='*.p12' --exclude='id_rsa' \
+      --exclude='*secret*' --exclude='*credential*' --exclude='.netrc' --exclude='.npmrc' \
+      --exclude='*.lock' --exclude='*.min.*' -e "$1" "$DIR" </dev/null
   fi
 }
 

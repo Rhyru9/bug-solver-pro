@@ -36,6 +36,18 @@ class UsageTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertIn("(none)", result.stdout)
 
+    def test_credential_like_files_are_not_listed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "sample.txt").write_text("visible-marker\n")
+            (root / ".env").write_text("visible-marker\n")
+            (root / "credentials.json").write_text("visible-marker\n")
+            result = self.run_helper("visible-marker", directory)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("sample.txt", result.stdout)
+            self.assertNotIn(".env", result.stdout)
+            self.assertNotIn("credentials.json", result.stdout)
+
 
 @unittest.skipUnless(Path("/bin/bash").exists() and shutil.which("git"), "Optional Bash/Git helpers")
 class CoChangeTests(unittest.TestCase):

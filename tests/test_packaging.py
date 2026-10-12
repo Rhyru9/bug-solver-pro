@@ -20,7 +20,7 @@ class PackagingTests(unittest.TestCase):
         root = Path(destination)
         for directory in ("skills", ".claude-plugin", ".github"):
             shutil.copytree(ROOT / directory, root / directory)
-        for filename in ("LICENSE", "README.md", "COMPATIBILITY.md"):
+        for filename in ("LICENSE", "README.md", "COMPATIBILITY.md", "CHANGELOG.md"):
             shutil.copy2(ROOT / filename, root / filename)
         return root
 

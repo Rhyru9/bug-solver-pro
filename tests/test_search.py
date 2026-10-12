@@ -95,6 +95,29 @@ class RetrievalTests(unittest.TestCase):
             self.assertEqual(result["results"][0]["id"], "duplicate-delivery")
             self.assertEqual(result["mode"], "investigation_plan")
 
+    def test_copied_agent_layout_runs_search(self):
+        import shutil
+        with tempfile.TemporaryDirectory() as directory:
+            installed = Path(directory) / ".agents" / "skills" / "bug-solver-pro"
+            shutil.copytree(SCRIPT_DIR.parent, installed)
+            completed = subprocess.run(
+                [sys.executable, "-B", str(installed / "scripts/search.py"),
+                 "webhook retry", "--plan", "--json"], cwd=directory,
+                capture_output=True, text=True, check=True,
+            )
+            result = json.loads(completed.stdout)
+            self.assertEqual(result["results"][0]["id"], "duplicate-delivery")
+
+    def test_fixture_symptom_ranks_duplicate_delivery_plan(self):
+        root = SCRIPT_DIR.parents[2]
+        symptom = (root / "tests/fixtures/duplicate-webhook/symptom.txt").read_text(encoding="utf-8").strip()
+        result = search(symptom)
+        self.assertEqual(result["results"][0]["id"], "duplicate-delivery")
+        plan = investigation_plan(result)
+        self.assertEqual(plan["hypotheses"][0]["pattern_id"], "duplicate-delivery")
+        self.assertEqual(plan["hypotheses"][0]["status"], "ASSUMED")
+        self.assertNotIn("observed_cause", plan["hypotheses"][0])
+
     def test_cli_invalid_query_has_nonzero_exit(self):
         result = subprocess.run([sys.executable, "-B", str(SCRIPT_DIR / "search.py"), "!!!"],
                                 capture_output=True, text=True)
@@ -192,6 +215,29 @@ class ShellScanTests(unittest.TestCase):
             result = self.run_scan(source, tools)
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertIn("TODO investigate this sentinel", result.stdout)
+
+    @unittest.skipUnless(Path("/bin/bash").exists(), "Optional Bash helper")
+    def test_credential_like_files_are_not_scanned(self):
+        import shutil
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            tools = root / "tools"
+            tools.mkdir()
+            source = root / "source"
+            source.mkdir()
+            (source / "example.txt").write_text("TODO visible sentinel\n")
+            (source / ".env").write_text("TODO hidden secret sentinel\n")
+            (source / "credentials.json").write_text("TODO credential sentinel\n")
+            executable = tools / "gtimeout"
+            executable.write_text('#!/bin/bash\nshift\nexec "$@"\n')
+            executable.chmod(0o755)
+            for command in ("head", "rg" if shutil.which("rg") else "grep"):
+                (tools / command).symlink_to(shutil.which(command))
+            result = self.run_scan(source, tools)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("TODO visible sentinel", result.stdout)
+            self.assertNotIn("hidden secret sentinel", result.stdout)
+            self.assertNotIn("credential sentinel", result.stdout)
 
 
 if __name__ == "__main__":

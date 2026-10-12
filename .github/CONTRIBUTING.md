@@ -2,7 +2,7 @@
 
 Project repository: [Rhyru9/bug-solver-pro](https://github.com/Rhyru9/bug-solver-pro). Use its [issue tracker](https://github.com/Rhyru9/bug-solver-pro/issues) and [pull requests](https://github.com/Rhyru9/bug-solver-pro/pulls). Public installation is documented in the [README](https://github.com/Rhyru9/bug-solver-pro#install-from-github).
 
-For source development after publication:
+Clone the source:
 
 ```bash
 git clone https://github.com/Rhyru9/bug-solver-pro.git
@@ -11,14 +11,27 @@ cd bug-solver-pro
 
 Canonical skill resources live in `skills/bug-solver-pro/`. Claude plugin metadata lives in `.claude-plugin/`. Tests and repository tooling live in `tests/` and `scripts/`; neither requires third-party Python packages.
 
+To load this checkout into Codex while developing the skill:
+
+```bash
+npx skills@1.7.2 add . --skill bug-solver-pro --agent codex --yes
+```
+
+To run Claude Code against this checkout as a plugin:
+
+```bash
+claude --plugin-dir .
+```
+
 Report broken behavior with the bug template. Use the diagnostic-gap template for unrecorded mechanisms, misleading search results or missing observation angles. Include sanitized inputs, versions, expected/actual behavior and traceable evidence. Keep unrelated production actions outside reproduction work.
 
-Catalog seeds remain heuristics. Each added pattern needs a candidate mechanism, discriminator, falsifying result, verification, limits and local source references. Add positive paraphrases and confusing or unrelated queries to retrieval tests. Keep genuinely reproduced lessons separate from hypothetical mechanisms. Do not make the catalog a required ceiling on investigation.
+Catalog seeds remain heuristics. Each added pattern needs a candidate mechanism, discriminator, falsifying result, verification, limits and local source references. Add positive paraphrases and confusing or unrelated queries to retrieval tests. Keep genuinely reproduced lessons separate from hypothetical mechanisms. Do not make the catalog a required ceiling on investigation. Installed-skill search contracts live in `skills/bug-solver-pro/references/17-structured-tooling.md`; repository tests stay in `tests/`.
 
 Before submitting a change, run:
 
 ```bash
 python -B scripts/check_package.py
+python -B skills/bug-solver-pro/scripts/validate_data.py
 python -B -m unittest discover -s tests -v
 ```
 

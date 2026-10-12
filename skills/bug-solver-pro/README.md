@@ -1,6 +1,6 @@
 # bug-solver-pro
 
-Source and installation guide: [Rhyru9/bug-solver-pro](https://github.com/Rhyru9/bug-solver-pro). Once published, install from your destination project with `npx skills add Rhyru9/bug-solver-pro --skill bug-solver-pro`; add `--global` for user-level installation. Report skill or tooling problems in the [issue tracker](https://github.com/Rhyru9/bug-solver-pro/issues).
+Source and installation guide: [Rhyru9/bug-solver-pro](https://github.com/Rhyru9/bug-solver-pro). From the destination project, install with `npx skills@1.7.2 add Rhyru9/bug-solver-pro --skill bug-solver-pro`; add `--global` for user-level installation. After install, ask the agent to use bug-solver-pro on a real failure. Report skill or tooling problems in the [issue tracker](https://github.com/Rhyru9/bug-solver-pro/issues).
 
 A debugging framework across languages, frameworks, and libraries. Start with [SKILL.md](SKILL.md); open references according to the question under investigation.
 

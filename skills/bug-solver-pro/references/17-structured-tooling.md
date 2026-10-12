@@ -1,6 +1,6 @@
 # 17. Structured diagnostic tooling
 
-Use when searching unclear symptoms or maintaining the bundled catalog and retrieval tooling.
+Use when searching unclear symptoms with the bundled catalog.
 
 ## Layers
 
@@ -54,16 +54,9 @@ Retrieval searches titles, symptom signals, keywords and mechanisms. Generic ter
 
 JSON reports `matched`, `weak_match` or `no_match`, along with unmatched query terms. Each result also has `match_quality`. A single meaningful term or at most 50% token overlap marks that result weak; the overall status follows the leading result. Even with a sufficiently matched leading result, weak secondary results remain leads and are excluded from the plan's hypotheses. These conservative lexical rules are not a validated causal-confidence model. Valid weak/no-match queries exit 0; invalid input or malformed/missing data exits 2. Query coverage describes token overlap, not semantic fit. Reject irrelevant results and map the actual flow; do not present the leading result as an established cause.
 
-## Maintenance checks
+## Catalog checks in the installed skill
 
-From the source repository root:
-
-```bash
-python3 -B skills/bug-solver-pro/scripts/validate_data.py
-python3 -B -m unittest discover -s tests -v
-```
-
-Add realistic retrieval queries and expected applicable patterns when extending the data. Include unrelated queries and cases that must abstain. Verify source paths, mechanism limits, and missing evidence. These tests evaluate tooling behavior, not whether an agent diagnoses a real bug correctly.
+`scripts/validate_data.py` rejects incomplete catalog records and broken local references. Adding patterns, retrieval tests, and repository checks is documented in the source [contributor guide](https://github.com/Rhyru9/bug-solver-pro/blob/main/.github/CONTRIBUTING.md). Those tests evaluate tooling behavior, not whether an agent diagnoses a real bug correctly.
 
 ## Gaps closed and remaining
 
@@ -77,5 +70,6 @@ Add realistic retrieval queries and expected applicable patterns when extending 
 | Search relevance untested | Ranking, no-match, domain and copied-install tests | No realistic agent effectiveness benchmark yet |
 | Agent-specific script path assumptions | Resolve data beside the installed script | Installed hosts still require their native discovery and permissions |
 | Missing timeout looked like no matches | Shell scan dependency/error failures are explicit | Shell helpers still require their documented tools |
+| Hidden credential files entered scan output | Scan and usage search skip `.env`, `*.pem`, and `secret`/`credential` names | Other sensitive filenames can still match if they use ordinary names |
 
 Expand stack-specific guidance only for demonstrated gaps, with actual versions, authoritative sources and applicability limits. A maintained cross-stack reasoning catalog is preferable to an unverified list of fixes for every framework. For future effectiveness testing, use raw bug artifacts and independent correctness oracles, then measure diagnosis, regressions, scope and investigation cost.

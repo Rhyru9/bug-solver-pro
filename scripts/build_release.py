@@ -24,7 +24,7 @@ def build_release(output_dir, root=ROOT):
         raise ValueError("Output directory must be outside the bundled skill and plugin metadata")
     files = list(resource_files(skill))
     plugin_files = files + list(resource_files(root / ".claude-plugin"))
-    plugin_files += [root / "LICENSE", root / "README.md", root / "COMPATIBILITY.md"]
+    plugin_files += [root / "LICENSE", root / "README.md", root / "COMPATIBILITY.md", root / "CHANGELOG.md"]
     # README's maintainer-guide link remains valid in the plugin artifact.
     plugin_files += [root / ".github/CONTRIBUTING.md"]
     archives = [output / f"bug-solver-pro-skill-v{package['version']}.zip",

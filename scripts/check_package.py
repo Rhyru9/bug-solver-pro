@@ -61,7 +61,7 @@ def check_package(root=ROOT, tag=None):
         raise ValueError("Skill description must contain 1–1024 characters")
     patterns = validate_catalog(json_file(skill / "data/patterns.json"), root=skill)
     axes = validate_angles(json_file(skill / "data/angles.json"), root=skill)
-    documents = [root / "README.md", root / "COMPATIBILITY.md"]
+    documents = [root / "README.md", root / "COMPATIBILITY.md", root / "CHANGELOG.md"]
     documents += list(skill.rglob("*.md")) + list((root / ".github").rglob("*.md"))
     for document in documents:
         content = document.read_text(encoding="utf-8")

@@ -13,7 +13,7 @@
       "source": "./",
       "homepage": "https://github.com/Rhyru9/bug-solver-pro",
       "repository": "https://github.com/Rhyru9/bug-solver-pro",
-      "description": "Evidence-driven debugging with structured mechanism search and investigation of unrecorded bugs."
+      "description": "Investigate and fix backend or application logic bugs through flow mapping, testable hypotheses, structured mechanism search, and regression verification."
     }
   ]
 }
