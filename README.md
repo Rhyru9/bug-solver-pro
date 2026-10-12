@@ -4,7 +4,13 @@ An installable agent skill for diagnosing and fixing backend and application log
 
 Canonical repository: [Rhyru9/bug-solver-pro](https://github.com/Rhyru9/bug-solver-pro). [Report an issue](https://github.com/Rhyru9/bug-solver-pro/issues) or browse [releases](https://github.com/Rhyru9/bug-solver-pro/releases).
 
-Install with [Skills CLI](https://github.com/vercel-labs/skills). Node.js and npm (which includes `npx`) are required. The first run downloads the CLI. There is no separate npm package named `bug-solver-pro`. Command examples match Skills CLI 1.7.2; pin with `npx skills@1.7.2` when a newer CLI changes flags.
+Install with [Skills CLI](https://github.com/vercel-labs/skills). Node.js and npm (which includes `npx`) are required. The first run downloads the CLI. There is no separate npm package named `bug-solver-pro`.
+
+Commands below use `npx skills` (latest CLI). To pin a known version, insert `@1.7.2` after `skills` (the version these examples were checked against):
+
+```bash
+npx skills@1.7.2 add Rhyru9/bug-solver-pro --skill bug-solver-pro
+```
 
 ## Install from GitHub
 
@@ -12,13 +18,13 @@ Run these commands from the project where the skill should be used:
 
 ```bash
 # Install in the current project; select agents interactively
-npx skills@1.7.2 add Rhyru9/bug-solver-pro --skill bug-solver-pro
+npx skills add Rhyru9/bug-solver-pro --skill bug-solver-pro
 
 # Install globally for the current user
-npx skills@1.7.2 add Rhyru9/bug-solver-pro --skill bug-solver-pro --global
+npx skills add Rhyru9/bug-solver-pro --skill bug-solver-pro --global
 
 # The full repository URL also works
-npx skills@1.7.2 add https://github.com/Rhyru9/bug-solver-pro --skill bug-solver-pro
+npx skills add https://github.com/Rhyru9/bug-solver-pro --skill bug-solver-pro
 ```
 
 GitHub installation fetches the complete skill directory, including data, scripts, references, and the MIT license. For a private fork, configure GitHub access in the environment before installing.
@@ -29,20 +35,20 @@ Run these commands from the **destination project** (the app being debugged). Re
 
 ```bash
 # Install for the current project
-npx skills@1.7.2 add /path/to/bug-solver-pro --skill bug-solver-pro
+npx skills add /path/to/bug-solver-pro --skill bug-solver-pro
 
 # Install globally for the current user, across projects
-npx skills@1.7.2 add /path/to/bug-solver-pro --skill bug-solver-pro --global
+npx skills add /path/to/bug-solver-pro --skill bug-solver-pro --global
 ```
 
 The CLI prompts for target agents. To choose them explicitly and skip prompts:
 
 ```bash
 # Current project: Codex and Claude Code
-npx skills@1.7.2 add /path/to/bug-solver-pro --skill bug-solver-pro --agent codex claude-code --yes
+npx skills add /path/to/bug-solver-pro --skill bug-solver-pro --agent codex claude-code --yes
 
 # Global: Codex and Claude Code
-npx skills@1.7.2 add /path/to/bug-solver-pro --skill bug-solver-pro --agent codex claude-code --global --yes
+npx skills add /path/to/bug-solver-pro --skill bug-solver-pro --agent codex claude-code --global --yes
 ```
 
 Use `--copy` for copied files instead of agent-directory symlinks. All references, templates, and helper scripts ship with the skill.
@@ -51,13 +57,13 @@ Use `--copy` for copied files instead of agent-directory symlinks. All reference
 
 ```bash
 # List skills in the published repository without installing
-npx skills@1.7.2 add Rhyru9/bug-solver-pro --list
+npx skills add Rhyru9/bug-solver-pro --list
 
 # List installed skills in the current project
-npx skills@1.7.2 list
+npx skills list
 
 # List globally installed skills
-npx skills@1.7.2 list --global
+npx skills list --global
 ```
 
 In Codex, invoke `$bug-solver-pro`; in Claude Code, invoke `/bug-solver-pro`. Agents can also select it when the request matches its description. Invocation and discovery differ between products; see [agent compatibility](COMPATIBILITY.md).
@@ -83,10 +89,12 @@ If `python3` is missing, use `python` or `py -3`.
 ## Upgrade and remove
 
 ```bash
-npx skills@1.7.2 update
-npx skills@1.7.2 remove bug-solver-pro
-npx skills@1.7.2 remove bug-solver-pro --global
+npx skills update
+npx skills remove bug-solver-pro
+npx skills remove bug-solver-pro --global
 ```
+
+The same pin works here: `npx skills@1.7.2 update` or `npx skills@1.7.2 remove bug-solver-pro`.
 
 Claude Code marketplace installs are separate from `npx skills add`. Remove the plugin in Claude Code if that route was used, so two copies of the workflow are not left behind.
 
@@ -121,22 +129,22 @@ The same skill package can target many agents through Skills CLI, including Clau
 
 ```bash
 # From the destination project
-npx skills@1.7.2 add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent claude-code codex cursor gemini-cli opencode github-copilot --yes
+npx skills add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent claude-code codex cursor gemini-cli opencode github-copilot --yes
 
 # Same agents, globally
-npx skills@1.7.2 add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent claude-code codex cursor gemini-cli opencode github-copilot --global --yes
+npx skills add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent claude-code codex cursor gemini-cli opencode github-copilot --global --yes
 
 # OpenClaw and Hermes Agent, from the destination project/workspace
-npx skills@1.7.2 add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent openclaw hermes-agent --yes
+npx skills add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent openclaw hermes-agent --yes
 
 # OpenClaw and Hermes Agent, globally
-npx skills@1.7.2 add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent openclaw hermes-agent --global --yes
+npx skills add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent openclaw hermes-agent --global --yes
 
 # GitHub Copilot CLI uses the github-copilot installer target
-npx skills@1.7.2 add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent github-copilot --yes
+npx skills add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent github-copilot --yes
 
 # Every agent supported by the installed CLI
-npx skills@1.7.2 add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent '*' --yes
+npx skills add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent '*' --yes
 ```
 
 The wildcard includes agents the reader may not use; an explicit list is safer. Add `--global` to the wildcard command for user-level installation. Other targets include Goose, Pi, Kimi Code CLI, Qwen Code, Roo Code, Windsurf, and more; the complete list is in the [Skills CLI README](https://github.com/vercel-labs/skills#supported-agents). See [COMPATIBILITY.md](COMPATIBILITY.md) for directories, invocation, OpenClaw workspace selection, Hermes project trust, helper requirements, and known limits.
