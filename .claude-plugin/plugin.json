@@ -1,6 +1,6 @@
 {
   "name": "bug-solver-pro",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Investigate and fix backend or application logic bugs through flow mapping, testable hypotheses, structured mechanism search, and regression verification.",
   "author": {
     "name": "Rhyru9",

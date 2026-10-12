@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.1
+
+- README install commands use the latest Skills CLI (`npx skills`). Pinning `@1.7.2` is documented as an option.
+- User-facing install docs, after-install prompt, upgrade/remove, and compatibility notes for destination projects.
+- Scan and usage helpers skip `.env` and credential-like names.
+- Plugin description matches the skill's backend-or-application-logic scope.
+
 ## 1.0.0
 
 - Installable Agent Skills package with a 48-pattern heuristic catalog, fourteen observation angles, and optional Python search (`--plan`, `--explore`).
