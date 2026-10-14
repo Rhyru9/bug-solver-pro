@@ -11,6 +11,8 @@ cd bug-solver-pro
 
 Canonical skill resources live in `skills/bug-solver-pro/`. Claude plugin metadata lives in `.claude-plugin/`. Tests and repository tooling live in `tests/` and `scripts/`; neither requires third-party Python packages.
 
+Language-specific guidance belongs in `references/languages/<language>/guide.md` within the canonical skill. Framework-specific guidance belongs in `references/languages/<language>/frameworks/<framework>/guide.md`. Use the [module index](../skills/bug-solver-pro/references/languages/index.md) and [authoring template](../skills/bug-solver-pro/templates/stack-module.md). Link each new module from the index and each framework from its language guide. Keep shared causal mechanisms in the numbered references and add only populated modules with concrete discovery questions, experiments, and verification limits. Package checks validate nested Markdown links and release builds include these directories recursively.
+
 To load this checkout into Codex while developing the skill:
 
 ```bash
@@ -26,6 +28,14 @@ claude --plugin-dir .
 Report broken behavior with the bug template. Use the diagnostic-gap template for unrecorded mechanisms, misleading search results or missing observation angles. Include sanitized inputs, versions, expected/actual behavior and traceable evidence. Keep unrelated production actions outside reproduction work.
 
 Catalog seeds remain heuristics. Each added pattern needs a candidate mechanism, discriminator, falsifying result, verification, limits and local source references. Add positive paraphrases and confusing or unrelated queries to retrieval tests. Keep genuinely reproduced lessons separate from hypothetical mechanisms. Do not make the catalog a required ceiling on investigation. Installed-skill search contracts live in `skills/bug-solver-pro/references/17-structured-tooling.md`; repository tests stay in `tests/`.
+
+Framework techniques also need retrieval metadata in `data/frameworks/<language>/<framework>/recipes.json`. Follow the structured-tooling schema: stable IDs, diagnostic domain, curated keyword aliases, one owning reference, exact heading and heuristic evidence label. Markdown remains the content owner. Every numbered playbook recipe and optional boundary case must be indexed exactly once, and metadata owner must match file/reference paths. Validators reject duplicate JSON keys/references/domains, cross-owner routes, omitted recipes and ambiguous/empty sections. Add meaningful retrieval regressions and negative controls; counts alone do not assess semantic quality. The [data audit](../skills/bug-solver-pro/references/coverage/data-audit.md) tracks demonstrated gaps and evidence.
+
+Framework modules require `playbook.md` with usable stack-specific recipes: concrete failure signatures, causal mechanisms/prerequisites, probes with falsifying outcomes, repair options/tradeoffs, and regression verification. A generic question list or URL list alone is insufficient. Link supporting official contracts at the recipe and keep authored techniques distinct from reproduced incidents. Each module also requires `docs.md` with verified direct official links and version-selection guidance. Lead the dedicated [framework index](../skills/bug-solver-pro/references/frameworks/index.md) and guide with the playbook. Follow the [documentation access workflow](../skills/bug-solver-pro/references/framework-documentation.md) for unresolved contracts/version changes. Package checks cover local links; remote availability requires a separate check when changing URLs.
+
+Track consequential skill gaps in the [coverage audit](../skills/bug-solver-pro/references/coverage/gap-audit.md), naming observed weakness, implemented correction, evidence level and remaining limits. A non-failing probe is inconclusive unless applicability, activation, sensitivity and comparable state are established. Keep optional deep cases in `boundary-case.md` and link them from the playbook and guide; `--framework` loads that file when present. Package checks require each discovered framework to have playbook/guide/docs and resolve its local resources. Runtime effectiveness is a separate claim from Python tooling tests.
+
+The optional FastAPI runtime probe executes isolated ASGI fixtures only when FastAPI is already installed; it does not add a dependency requirement to ordinary tooling checks. Record its actual versions and bounded results separately from production incidents or general agent effectiveness. New runtime probes need independent correctness expectations and a discriminator/repair comparison, not assertions that merely echo documentation headings.
 
 Before submitting a change, run:
 

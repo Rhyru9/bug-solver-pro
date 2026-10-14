@@ -2,7 +2,6 @@
 """Check repository packaging invariants using only the Python standard library."""
 
 import argparse
-import json
 from pathlib import Path
 import re
 import sys
@@ -10,12 +9,13 @@ from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "skills/bug-solver-pro/scripts"))
-from core import validate_angles, validate_catalog
+from core import load_json, validate_angles, validate_catalog
+from frameworks import framework_context
+from recipe_index import load_recipe_catalog
 
 
 def json_file(path):
-    with path.open(encoding="utf-8") as stream:
-        return json.load(stream)
+    return load_json(path)
 
 
 def check_package(root=ROOT, tag=None):
@@ -61,6 +61,10 @@ def check_package(root=ROOT, tag=None):
         raise ValueError("Skill description must contain 1–1024 characters")
     patterns = validate_catalog(json_file(skill / "data/patterns.json"), root=skill)
     axes = validate_angles(json_file(skill / "data/angles.json"), root=skill)
+    framework_guides = list((skill / "references/languages").glob("*/frameworks/*/guide.md"))
+    for guide in framework_guides:
+        framework_context(guide.parent.name, root=skill)
+    recipes = load_recipe_catalog(skill)
     documents = [root / "README.md", root / "COMPATIBILITY.md", root / "CHANGELOG.md"]
     documents += list(skill.rglob("*.md")) + list((root / ".github").rglob("*.md"))
     for document in documents:
@@ -79,7 +83,8 @@ def check_package(root=ROOT, tag=None):
     for path in skill.rglob("*"):
         if path.is_symlink():
             raise ValueError(f"Canonical skill must not depend on symlinked resources: {path}")
-    return {"version": version, "patterns": len(patterns), "angles": len(axes), "documents": len(documents)}
+    return {"version": version, "patterns": len(patterns), "angles": len(axes),
+            "frameworks": len(framework_guides), "recipes": len(recipes), "documents": len(documents)}
 
 
 def main():
@@ -91,7 +96,7 @@ def main():
     except (OSError, ValueError, TypeError) as error:
         print(f"Package check failed: {error}", file=sys.stderr)
         return 1
-    print(f"Package valid: v{result['version']}; {result['patterns']} patterns; {result['angles']} angles; {result['documents']} documents.")
+    print(f"Package valid: v{result['version']}; {result['patterns']} patterns; {result['angles']} angles; {result['frameworks']} framework modules; {result['recipes']} indexed techniques; {result['documents']} documents.")
     return 0
 
 

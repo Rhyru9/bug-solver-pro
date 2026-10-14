@@ -27,6 +27,8 @@ Limits of the conclusion:
 
 There is no minimum hypothesis count. For a simple mechanism already directly proven, proceed to the fix. If evidence fits multiple explanations, choose a discriminating experiment from [15-evidence-and-experiments](15-evidence-and-experiments.md). Verify unfamiliar semantics through `13` and `14`.
 
+Before accepting a probe's negative result, check applicability, actual trigger activation, observation sensitivity, and comparable state using [19-causal-decision-procedure](19-causal-decision-procedure.md). A passing test that never activates the mechanism is inconclusive, not a rejection. Use [20-composed-failures](20-composed-failures.md) when correct components produce an incorrect combined result.
+
 ## Separate three questions
 
 - **Technical cause:** what mechanism violates the invariant? Example: two paths debit the balance for the same event.

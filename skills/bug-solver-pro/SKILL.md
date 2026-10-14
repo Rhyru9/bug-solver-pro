@@ -18,11 +18,14 @@ Resolve `<skill-root>` to the folder containing this installed `SKILL.md`; do no
 python3 "<skill-root>/scripts/search.py" "duplicate webhook retry" --domain concurrency
 python3 "<skill-root>/scripts/search.py" "stale cache after write" --plan --json
 python3 "<skill-root>/scripts/search.py" "unexplained boundary failure" --explore
+python3 "<skill-root>/scripts/search.py" "transaction pool stall" --framework "Spring Boot" --plan
 ```
 
 Use 2–5 sanitized English symptom/mechanism terms; translate a report into keywords without inventing facts. Domain filters are explicit; omit `--domain` when the boundary is uncertain. Inspect matched terms and applicability before using a result; the score is lexical relevance, not confidence in a cause. Every seed is a heuristic sourced from bundled references, not a verified incident. Turn applicable results into hypotheses and select an experiment based on actual code and evidence. Do not apply a listed mechanism as an automatic fix or require every returned hypothesis to be investigated.
 
-If results are absent, weak, unrelated or contradicted, state the retrieval limit and use [coverage and unknowns](references/18-coverage-and-unknowns.md) to map the first incorrect boundary, test hidden assumptions and form a new falsifiable mechanism. `--explore` prints fourteen observation angles independently of catalog fit; `--plan` includes exploration for absent or weak matches. The angles guide investigation and are not an exhaustive list of possible bugs. Python is optional for the reasoning workflow. Read [structured tooling](references/17-structured-tooling.md) for the schema, query contract, validation, and remaining gaps.
+CLI queries also search per-framework data indexes under `data/frameworks/<language>/<framework>/recipes.json` and return exact local working-knowledge sections in `framework_matches`. This is separate from the shared catalog's `status` and plan hypotheses: a shared `no_match` may still have useful recipe leads. Without a declared framework, verify stack applicability before using a hit. Indexes own keywords/routes; Markdown owns the mechanism and repair. Use `--framework` to restrict recipe leads to the identified stack.
+
+If results are absent, weak, unrelated or contradicted, state the retrieval limit and use [coverage and unknowns](references/18-coverage-and-unknowns.md) to map the first incorrect boundary, test hidden assumptions and form a new falsifiable mechanism. `--explore` prints twenty observation angles independently of catalog fit; `--plan` includes exploration for absent or weak matches. The angles guide investigation and are not an exhaustive list of possible bugs. Python is optional for the reasoning workflow. Read [structured tooling](references/17-structured-tooling.md) for the schema, query contract, validation, and remaining gaps.
 
 ## Choose depth according to the problem
 
@@ -32,12 +35,22 @@ If results are absent, weak, unrelated or contradicted, state the retrieval limi
 
 Increase depth when evidence conflicts, scope grows, or a patch exposes another symptom. You do not need to read every reference, fill every template, invent multiple hypotheses for a proven typo, or run the entire suite without a reason. Templates may be used in working notes; do not add repository files merely to satisfy a process.
 
+## Select language and framework guidance
+
+After identifying the executing stack, use the [language/framework index](references/languages/index.md). Read the relevant language guide and the implicated framework's `playbook.md`: its symptom-specific mechanisms, probes/falsifiers, and repair/verification patterns are the first working resource. Read the framework's `guide.md` when broader boundary mapping is needed. Combine relevant modules for mixed stacks without loading unrelated guides.
+
+The [framework index](references/frameworks/index.md) links directly to every local playbook. Apply a matching recipe by inspecting code and running its discriminator; a known recipe is still a hypothesis until evidence supports it. Use `docs.md` and the [documentation access workflow](references/framework-documentation.md) to resolve an unknown contract, version change, configuration difference, or contradicted assumption. A clear local bug does not require reading a manual before working. Follow the host's browsing requirements; when external verification is required, target the specific claim and cite the supporting page. If access is unavailable, use local/tagged sources or matching experiments and state the evidence limit.
+
+Use `--framework <name>` to include the local playbook/deeper case and scope recipe retrieval, independently of shared symptom ranking. It does not detect the stack, filter the shared catalog, promote recipes into plan hypotheses, or change shared match status. When a familiar recipe passes without explaining the incident, read [causal decision gates](references/19-causal-decision-procedure.md). For interactions, use [composed failures](references/20-composed-failures.md). The [gap audit](references/coverage/gap-audit.md) and [data audit](references/coverage/data-audit.md) separate implemented support from runtime validation and remaining limits.
+
+These modules provide diagnostic questions and experiments; verify the actual version/configuration before treating an answer as established. For an unlisted stack, continue with [stack semantics](references/14-stack-semantics.md) and [adaptive research](references/13-research-adaptive.md). Shared reasoning and the symptom catalog remain applicable across stacks. When skill maintenance is authorized, use the [module template](templates/stack-module.md) and extension instructions in the index.
+
 ## Decision principles
 
 1. **Understand before changing.** Explain trigger → flow → first invariant violation → symptom. Map the boundaries that affect the decision, then expand when evidence requires it.
 2. **Establish correct behavior from authoritative sources.** Requirements, contracts, specifications, and tests may conflict. Existing tests and behavior are not automatically correct; resolve ambiguities that change the fix.
 3. **Look for mechanisms, not technology names.** Discover the semantics of the version actually running: lifetime, mutation, errors, transactions, serialization, scheduling, and resources. Do not transfer solutions between stacks without checking assumptions.
-4. **Separate evidence from assumptions.** `[VERIFIED]` identifies the observation, artifact/command, and context. Documentation establishes a documented contract; it does not establish the cause of an incident. Use `[ASSUMED]`, `[REJECTED]`, or `[INCONCLUSIVE]` as appropriate.
+4. **Separate evidence from assumptions.** `[VERIFIED]` identifies the observation, artifact/command, and context. Documentation establishes a documented contract; it does not establish the cause of an incident. Reject a mechanism from a negative probe only when applicability, activation, observation sensitivity, and comparable state are established. Otherwise use `[INCONCLUSIVE]`; retain `[ASSUMED]` for untested candidates and `[REJECTED]` for supported contradictions.
 5. **Test hypotheses before stacking patches.** Choose experiments that distinguish explanations and change decisions. If results disagree, revise the model instead of protecting a hypothesis with more patches.
 6. **Fix at the invariant's owner.** Choose the smallest change in behavior and impact, not simply the fewest lines. Guards, retries, fallbacks, or validation can be valid fixes when justified by the contract and failure mode; silently swallowing failures is insufficient.
 7. **Preserve scope and safeguards.** Do not weaken authorization, constraints, validation, or tests to pass a patch. If a rule/test is wrong, show evidence and update it deliberately. Avoid unnecessary refactoring or upgrades.
@@ -47,7 +60,7 @@ Increase depth when evidence conflicts, scope grows, or a patch exposes another 
 ## Reasoning workflow
 
 1. **Define the failure and oracle.** Expected versus actual behavior, the basis for the expectation, triggers, a healthy comparison case, and how correctness is detected. Reproduce when possible; otherwise retain incident evidence and state its limits.
-2. **Identify the system actually executing.** Match source to artifacts, runtime, installed dependencies, configuration, and environment. Follow data/control/state/resources across relevant boundaries; check direct and indirect callers. For unfamiliar stacks, read `14`.
+2. **Identify the system actually executing.** Match source to artifacts, runtime, installed dependencies, configuration, and environment. Follow data/control/state/resources across relevant boundaries; check direct and indirect callers. Select the relevant language/framework modules from the index; for unfamiliar semantics, read `14`.
 3. **Build a causal explanation.** Record hypotheses, predictions, falsifying evidence, and experiment results. Find the first invariant violation; distinguish technical causes, triggers, and detection gaps. For intermittent failures or missing reproductions, read `15`.
 4. **Assess impact and options.** What changes, who depends on it, what data/effects have already occurred, what can partially fail, and what must remain correct? Code repair, data recovery, and incident mitigation are separate work.
 5. **Implement a targeted fix.** Obtain failing-before/passing-after evidence where possible; choose tests or checks suited to the failure mode. Follow project conventions. Structural changes are justified only when necessary to enforce the invariant.
@@ -66,6 +79,9 @@ Stop adding speculative patches; continue investigation. Compare before/after in
 
 | Question | Reference |
 |---|---|
+| Language-specific and framework-specific investigation | [Language/framework modules](references/languages/index.md) |
+| Framework-specific debugging recipes, probes, and repair patterns | [Framework playbooks](references/frameworks/index.md) |
+| Open docs, match versions, cite contracts, handle unavailable access | [Documentation access](references/framework-documentation.md) |
 | Flow, callers, data, invariants, ownership | [01-code-mapping](references/01-code-mapping.md) |
 | Hypotheses and causal diagnosis | [02-root-cause-analysis](references/02-root-cause-analysis.md) |
 | Consumers and change impact | [03-blast-radius](references/03-blast-radius.md) |
@@ -84,6 +100,11 @@ Stop adding speculative patches; continue investigation. Compare before/after in
 | Misleading traces, hidden state, rare bugs, stalled diagnosis | [16-hard-to-trace-debugging](references/16-hard-to-trace-debugging.md) |
 | Search catalog, `--plan`, `--explore`, schema | [17-structured-tooling](references/17-structured-tooling.md) |
 | Unrecorded mechanisms, partial matches, conflicting evidence, coverage gaps | [18-coverage-and-unknowns](references/18-coverage-and-unknowns.md) |
+| Probe validity, hidden identity/history, independent oracles, next experiment | [19-causal-decision-procedure](references/19-causal-decision-procedure.md) |
+| Retry/commit/cache/resource interactions and misleading local fixes | [20-composed-failures](references/20-composed-failures.md) |
+| Tracked skill gaps, implemented coverage, evidence levels, remaining limits | [Coverage audit](references/coverage/gap-audit.md) |
+| Query grain, null logic, snapshot/lease/cache/retry composition, historical populations | [21-data-and-query-semantics](references/21-data-and-query-semantics.md) |
+| Data integrity, per-framework indexes, source drift and retrieval gaps | [Data audit](references/coverage/data-audit.md) |
 
 [Templates](templates/investigation-notes.md) are optional aids; use only relevant sections. [Learned cases](references/learned-cases.md) retain cases with evidence and context.
 

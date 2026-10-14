@@ -2,6 +2,8 @@
 
 Use when a query has no applicable result, evidence contradicts a familiar pattern, a repair leaves unexplained behavior, or several interacting mechanisms may be involved. The catalog is open-ended; an unrecorded bug is not an exceptional case requiring a guessed match.
 
+The maintained [gap audit](coverage/gap-audit.md) records concrete weaknesses, fixes, evidence levels, and remaining runtime/stack limits. Use [causal decision gates](19-causal-decision-procedure.md) to avoid false rejection and [composed failures](20-composed-failures.md) for interactions. Framework-specific boundary cases are indexed in the audit and loaded by the CLI when `--framework` is supplied.
+
 ## Mechanism coverage
 
 The following are candidate angles, not confirmed causes or a requirement to inspect every row. New seed records in `data/patterns.json` are curated from these questions and references `14` and `15`. They are reasoning heuristics, not independently established framework facts or observed incidents.

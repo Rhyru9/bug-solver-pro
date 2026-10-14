@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "go",
+  "framework": "gin",
+  "recipes": [
+    {
+      "id": "gin-recipe-01",
+      "domain": "lifecycle",
+      "keywords": "gin context reused goroutine copy pointer request race background",
+      "references": [
+        "references/languages/go/frameworks/gin/playbook.md"
+      ],
+      "heading": "## 1. Background logging shows another request's context",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "gin-recipe-02",
+      "domain": "contracts",
+      "keywords": "bind mustbind shouldbind malformed validation status 400 duplicate writes",
+      "references": [
+        "references/languages/go/frameworks/gin/playbook.md"
+      ],
+      "heading": "## 2. Custom validation response still has status 400 or duplicate writes",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "gin-recipe-03",
+      "domain": "control-flow",
+      "keywords": "abort return forbidden unauthorized side effect handler continues",
+      "references": [
+        "references/languages/go/frameworks/gin/playbook.md"
+      ],
+      "heading": "## 3. Unauthorized request still executes code after Abort",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "gin-boundary",
+      "domain": "integration",
+      "keywords": "second binder eof body consumed shouldbindbodywith multiple structs json stream",
+      "references": [
+        "references/languages/go/frameworks/gin/boundary-case.md"
+      ],
+      "heading": "# Gin: A second binder sees EOF although the request body was valid",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

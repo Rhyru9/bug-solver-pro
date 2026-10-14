@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "javascript-typescript",
+  "framework": "nuxt",
+  "recipes": [
+    {
+      "id": "nuxt-recipe-01",
+      "domain": "integration",
+      "keywords": "ssr hydration duplicate fetch useasyncdata payload usefetch browser calls",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/nuxt/playbook.md"
+      ],
+      "heading": "## 1. SSR page fetches the same data again during hydration",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "nuxt-recipe-02",
+      "domain": "state",
+      "keywords": "async data key collision shared refs state resources components",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/nuxt/playbook.md"
+      ],
+      "heading": "## 2. Two components display each other's async data",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "nuxt-recipe-03",
+      "domain": "state",
+      "keywords": "server module ref state shared visitors usestate tenant leak ssr",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/nuxt/playbook.md"
+      ],
+      "heading": "## 3. One SSR visitor observes another visitor's state",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "nuxt-boundary",
+      "domain": "integration",
+      "keywords": "ssr authentication cookie headers server fetch browser identity userequestfetch",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/nuxt/boundary-case.md"
+      ],
+      "heading": "# Nuxt: Authenticated API works in the browser but fails during SSR",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

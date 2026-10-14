@@ -18,6 +18,20 @@ FIELDS = {
 STOPWORDS = frozenset("a an the is are was were to of in on at for and or with from it this that bug error problem issue please fix investigate".split())
 
 
+def load_json(path):
+    """Reject duplicate keys rather than letting JSON silently overwrite authored evidence."""
+    def unique_object(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError(f"Duplicate JSON key: {key}")
+            result[key] = value
+        return result
+
+    with path.open(encoding="utf-8") as stream:
+        return json.load(stream, object_pairs_hook=unique_object)
+
+
 def tokens(text):
     return [term for term in re.findall(r"[^\W_]+", text.lower(), re.UNICODE)
             if term not in STOPWORDS]
@@ -32,6 +46,8 @@ def validate_references(refs, identity, root):
         target = (root / ref).resolve()
         if not target.is_relative_to((root / "references").resolve()) or not target.is_file():
             raise ValueError(f"{identity}: invalid reference: {ref}")
+    if len(set(refs)) != len(refs):
+        raise ValueError(f"{identity}: duplicate references")
 
 
 def validate_catalog(catalog, root=SKILL_ROOT):
@@ -63,8 +79,7 @@ def validate_catalog(catalog, root=SKILL_ROOT):
 
 
 def load_catalog(path=CATALOG_PATH):
-    with path.open(encoding="utf-8") as stream:
-        return validate_catalog(json.load(stream))
+    return validate_catalog(load_json(path))
 
 
 def validate_angles(data, root=SKILL_ROOT):
@@ -90,6 +105,8 @@ def validate_angles(data, root=SKILL_ROOT):
         if (not isinstance(domains, list) or not domains
                 or any(not isinstance(domain, str) or domain not in DOMAINS for domain in domains)):
             raise ValueError(f"{identity}: invalid domains")
+        if len(set(domains)) != len(domains):
+            raise ValueError(f"{identity}: duplicate domains")
         covered.update(domains)
         validate_references(axis["references"], identity, root)
     if set(DOMAINS) - covered:
@@ -98,11 +115,10 @@ def validate_angles(data, root=SKILL_ROOT):
 
 
 def load_angles(path=ANGLES_PATH):
-    with path.open(encoding="utf-8") as stream:
-        return validate_angles(json.load(stream))
+    return validate_angles(load_json(path))
 
 
-def search(query, domain=None, limit=3, patterns=None):
+def search(query, domain=None, limit=3, patterns=None, framework=None):
     """BM25 lexical ranking over symptoms, not generic experiment boilerplate."""
     query_terms = sorted(set(tokens(query)))
     if not query_terms:
@@ -113,14 +129,16 @@ def search(query, domain=None, limit=3, patterns=None):
         raise ValueError("limit must be between 1 and 10")
     rows = load_catalog() if patterns is None else patterns
     # Rank against the whole catalog so filtering does not change term rarity.
-    docs = [Counter(tokens(" ".join([row["title"]] * 2 + [row["signals"]] * 2
-                                    + [row["keywords"], row["mechanism"]]))) for row in rows]
+    docs = [Counter(tokens(" ".join([row["title"]] * 2 + [row.get("signals", "")] * 2
+                                    + [row["keywords"], row.get("mechanism", "")]))) for row in rows]
     lengths = [sum(doc.values()) for doc in docs]
     average = sum(lengths) / len(docs) if docs else 1
     frequencies = Counter(term for doc in docs for term in doc)
     results = []
     for row, doc, length in zip(rows, docs, lengths):
         if domain is not None and row["domain"] != domain:
+            continue
+        if framework is not None and row.get("framework") != framework:
             continue
         matched = [term for term in query_terms if term in doc]
         if not matched:
@@ -157,6 +175,7 @@ def investigation_plan(result):
         "establish": [
             "Record expected versus actual behavior and an independent correctness oracle.",
             "Identify executing source/build, runtime versions, inputs, and failing versus healthy conditions.",
+            "Before treating a passing probe as a falsifier, establish applicability, trigger activation, observer sensitivity, and comparable initial state; otherwise mark it inconclusive.",
         ],
         "hypotheses": [{
             "pattern_id": row["id"], "status": "ASSUMED",

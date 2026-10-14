@@ -14,7 +14,9 @@
       "limits": "At-least-once delivery is a candidate until actual transport and consumer paths are inspected; some repeated operations are legitimate.",
       "references": [
         "references/06-concurrency-transactions.md",
-        "references/11-symptom-to-cause.md"
+        "references/11-symptom-to-cause.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -31,7 +33,9 @@
       "limits": "A lock or constraint is not automatically the right repair; identify isolation, scope, and every writer first.",
       "references": [
         "references/06-concurrency-transactions.md",
-        "references/02-root-cause-analysis.md"
+        "references/02-root-cause-analysis.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -48,7 +52,9 @@
       "limits": "Caller timeout alone establishes neither success nor failure; provider and operation-specific semantics must be verified.",
       "references": [
         "references/06-concurrency-transactions.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -65,7 +71,9 @@
       "limits": "An after-commit callback alone does not prove crash-safe delivery; notification absence can also arise downstream.",
       "references": [
         "references/06-concurrency-transactions.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -83,7 +91,9 @@
       "references": [
         "references/05-desync-angles.md",
         "references/07-data-migrations-cache.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -101,7 +111,9 @@
       "references": [
         "references/03-blast-radius.md",
         "references/05-desync-angles.md",
-        "references/11-symptom-to-cause.md"
+        "references/11-symptom-to-cause.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -118,7 +130,9 @@
       "limits": "An old record is not necessarily corrupt; establish compatibility and migration contracts first.",
       "references": [
         "references/07-data-migrations-cache.md",
-        "references/08-contracts-and-deploy.md"
+        "references/08-contracts-and-deploy.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -136,7 +150,9 @@
       "references": [
         "references/11-symptom-to-cause.md",
         "references/09-testing-verification.md",
-        "references/14-stack-semantics.md"
+        "references/14-stack-semantics.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -154,7 +170,8 @@
       "references": [
         "references/10-stack-pitfalls.md",
         "references/11-symptom-to-cause.md",
-        "references/14-stack-semantics.md"
+        "references/14-stack-semantics.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -171,7 +188,8 @@
       "limits": "Tests and current behavior are not automatically authoritative; establish the promised contract before preserving or changing it.",
       "references": [
         "references/08-contracts-and-deploy.md",
-        "references/09-testing-verification.md"
+        "references/09-testing-verification.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -188,7 +206,8 @@
       "limits": "One memory snapshot does not establish a leak; caches, workload changes and allocator behavior are alternatives.",
       "references": [
         "references/15-evidence-and-experiments.md",
-        "references/16-hard-to-trace-debugging.md"
+        "references/16-hard-to-trace-debugging.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -205,7 +224,8 @@
       "limits": "Do not assume N+1 or add caching from latency alone; index use and waiting require actual traces/plans.",
       "references": [
         "references/11-symptom-to-cause.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -222,7 +242,8 @@
       "limits": "Random repetition alone does not localize a cause; a passing run is not proof that flakiness is fixed.",
       "references": [
         "references/09-testing-verification.md",
-        "references/16-hard-to-trace-debugging.md"
+        "references/16-hard-to-trace-debugging.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -240,7 +261,8 @@
       "references": [
         "references/01-code-mapping.md",
         "references/13-research-adaptive.md",
-        "references/14-stack-semantics.md"
+        "references/14-stack-semantics.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -258,7 +280,8 @@
       "references": [
         "references/04-anti-fix-chain.md",
         "references/03-blast-radius.md",
-        "references/16-hard-to-trace-debugging.md"
+        "references/16-hard-to-trace-debugging.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -276,7 +299,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -294,7 +318,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -312,7 +337,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -330,7 +356,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -348,7 +376,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -366,7 +396,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -384,7 +416,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -402,7 +436,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -420,7 +456,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -438,7 +475,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -456,7 +494,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -474,7 +513,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -492,7 +532,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -510,7 +551,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -528,7 +570,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -546,7 +590,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -564,7 +610,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -582,7 +630,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -600,7 +650,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -618,7 +670,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -636,7 +690,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -654,7 +710,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -672,7 +730,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -690,7 +750,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -708,7 +769,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -726,7 +788,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -744,7 +807,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -762,7 +826,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -780,7 +845,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -798,7 +864,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -816,7 +883,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -834,7 +902,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
       ],
       "evidence_kind": "heuristic"
     },
@@ -852,7 +921,116 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/15-evidence-and-experiments.md"
+        "references/15-evidence-and-experiments.md",
+        "references/19-causal-decision-procedure.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "write-skew",
+      "domain": "concurrency",
+      "title": "Concurrent snapshots violate a shared predicate",
+      "signals": "Transactions each commit valid row changes but jointly break an aggregate invariant.",
+      "keywords": "write skew snapshot isolation predicate cross row invariant concurrent transactions",
+      "mechanism": "Independent snapshots allow conflicting decisions on different rows without protecting the shared predicate.",
+      "experiment": "Barrier two isolated connections after reading the same predicate, apply distinct-row changes, then inspect the invariant across committed results.",
+      "falsifies": "With that schedule activated, enforced constraints or conflict aborts prevent the joint violation; unforced overlap is inconclusive.",
+      "verification": "Check invariant, abort handling and bounded whole-transaction retries, including external effects.",
+      "limits": "Isolation names and guarantees are provider-specific; retrying just the last statement may preserve a stale decision.",
+      "references": [
+        "references/21-data-and-query-semantics.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "stale-cache-refill",
+      "domain": "state",
+      "title": "An old reader refills cache after invalidation",
+      "signals": "A fresh write invalidates a key, but an older delayed read later caches the previous value.",
+      "keywords": "cache invalidation late fill refill stale reader resurrection version ordering",
+      "mechanism": "An in-flight reader publishes old data after the newer invalidation without an ordering or version check.",
+      "experiment": "Pause a reader after its authoritative read, commit a newer write and invalidate, then release the old fill and compare stored versions.",
+      "falsifies": "The delayed fill is rejected or the resulting cached version remains current under the activated schedule.",
+      "verification": "Verify late fills, key identity, subsequent reads and the contractual freshness bound.",
+      "limits": "Deleting keys repeatedly may hide the race; cache-aside consistency is not guaranteed merely by choosing a pattern.",
+      "references": [
+        "references/21-data-and-query-semantics.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "lease-fencing",
+      "domain": "concurrency",
+      "title": "An expired lease holder still writes",
+      "signals": "An old worker resumes after lease expiry while a newer owner is already acting.",
+      "keywords": "lease expired stale owner fencing token epoch lock ttl resumed worker",
+      "mechanism": "Lease ownership changes without the protected resource rejecting stale-owner effects.",
+      "experiment": "Pause owner A past expiry, admit B, then resume A against an isolated protected resource; record owner epochs and accepted effects.",
+      "falsifies": "The resource rejects A's stale epoch before effects; a resumed worker that never attempts the write is inconclusive.",
+      "verification": "Check owner transitions, stale writes and partial failures at the actual effect boundary.",
+      "limits": "A lock-service token alone does not fence a downstream resource that never validates it.",
+      "references": [
+        "references/21-data-and-query-semantics.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "retry-amplification",
+      "domain": "performance",
+      "title": "Nested retries multiply downstream attempts",
+      "signals": "One request produces many dependency calls, exceeds a deadline or overloads a recovering service.",
+      "keywords": "retry deadline amplification nested attempts backoff jitter budget overload layers",
+      "mechanism": "Independent retry layers multiply attempts without a shared deadline, admission or operation budget.",
+      "experiment": "Count attempts by one operation across client, service and SDK while a local dependency fails predictably; compare layer combinations.",
+      "falsifies": "The expected attempt budget is respected and the observed excess work originates before those retry layers.",
+      "verification": "Verify bounded attempts, deadlines, error classes and idempotency of retried effects.",
+      "limits": "Jitter spreads load but does not itself cap attempts or make mutation retries safe.",
+      "references": [
+        "references/21-data-and-query-semantics.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "query-cardinality",
+      "domain": "representation",
+      "title": "Join multiplicity inflates totals or loses records",
+      "signals": "A join duplicates a parent amount or a filter removes intended unmatched rows.",
+      "keywords": "data join multiplies totals cardinality fanout aggregate sum count rows outer filter",
+      "mechanism": "Joined row cardinality or filter placement differs from the intended aggregation grain.",
+      "experiment": "Use fixtures with zero, one and several children; compare raw row identities and an independent total before inspecting rounding.",
+      "falsifies": "Row membership and multiplicity match the intended grain and divergence begins only in later arithmetic.",
+      "verification": "Check unmatched parents, multiple relationships and correct totals; compare entity identities as well as counts.",
+      "limits": "DISTINCT on amounts can remove legitimate equal values; pre-aggregate or reshape only according to the contract.",
+      "references": [
+        "references/21-data-and-query-semantics.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
+      ],
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "null-membership",
+      "domain": "representation",
+      "title": "A null changes membership exclusion results",
+      "signals": "An exclusion query unexpectedly returns no rows when a subquery or list contains null.",
+      "keywords": "sql null not in membership exclusion unknown three valued logic subquery",
+      "mechanism": "Membership/exclusion uses null-sensitive logical results that the application treats as ordinary booleans.",
+      "experiment": "Compare empty, null-containing and non-null membership fixtures at the real SQL boundary; inspect predicate results before WHERE filtering.",
+      "falsifies": "The intended null policy is explicit and query membership agrees for all implicated fixtures.",
+      "verification": "Verify nullable left/right values, empty sets and accepted/rejected rows.",
+      "limits": "NOT EXISTS can express a different null contract; do not mechanically substitute operators without defining identity semantics.",
+      "references": [
+        "references/21-data-and-query-semantics.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ],
       "evidence_kind": "heuristic"
     }

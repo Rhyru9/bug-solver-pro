@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "rust",
+  "framework": "actix-web",
+  "recipes": [
+    {
+      "id": "actix-web-recipe-01",
+      "domain": "state",
+      "keywords": "httpserver worker state counter per worker data outside factory shared",
+      "references": [
+        "references/languages/rust/frameworks/actix-web/playbook.md"
+      ],
+      "heading": "## 1. Counter or cache changes depending on worker",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "actix-web-recipe-02",
+      "domain": "lifecycle",
+      "keywords": "data extractor type scope shadow registration missing state",
+      "references": [
+        "references/languages/rust/frameworks/actix-web/playbook.md"
+      ],
+      "heading": "## 2. Data extractor cannot find state that appears registered",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "actix-web-recipe-03",
+      "domain": "integration",
+      "keywords": "extractor json body consumed two readers stream payload",
+      "references": [
+        "references/languages/rust/frameworks/actix-web/playbook.md"
+      ],
+      "heading": "## 3. Adding a second extractor breaks body parsing",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "actix-web-boundary",
+      "domain": "performance",
+      "keywords": "worker factory connection pool multiplied replicas database capacity budget",
+      "references": [
+        "references/languages/rust/frameworks/actix-web/boundary-case.md"
+      ],
+      "heading": "# Actix Web: Increasing HTTP workers exhausts database connections",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

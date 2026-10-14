@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "javascript-typescript",
+  "framework": "react",
+  "recipes": [
+    {
+      "id": "react-recipe-01",
+      "domain": "state",
+      "keywords": "batched increments count state snapshot functional updater lost updates queue",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/react/playbook.md"
+      ],
+      "heading": "## 1. Repeated increments lose updates",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "react-recipe-02",
+      "domain": "concurrency",
+      "keywords": "stale closure fetch response race old request overwrites newer selection",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/react/playbook.md"
+      ],
+      "heading": "## 2. Old request overwrites a newer selection",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "react-recipe-03",
+      "domain": "lifecycle",
+      "keywords": "strict mode effect twice setup cleanup subscription development remount",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/react/playbook.md"
+      ],
+      "heading": "## 3. Development sends twice; disabling Strict Mode hides it",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "react-boundary",
+      "domain": "state",
+      "keywords": "component key reorder draft row index identity list filter wrong state remount",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/react/boundary-case.md"
+      ],
+      "heading": "# React: Editing the second row changes the first row's draft",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

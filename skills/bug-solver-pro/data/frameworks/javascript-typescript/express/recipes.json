@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "javascript-typescript",
+  "framework": "express",
+  "recipes": [
+    {
+      "id": "express-recipe-01",
+      "domain": "control-flow",
+      "keywords": "async promise rejection express4 express5 catch next detached error middleware",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/express/playbook.md"
+      ],
+      "heading": "## 1. Async rejection misses the error handler",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "express-recipe-02",
+      "domain": "control-flow",
+      "keywords": "headers already sent double response stream write error handler",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/express/playbook.md"
+      ],
+      "heading": "## 2. Headers already sent hides the original exception",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "express-recipe-03",
+      "domain": "integration",
+      "keywords": "proxy trust forwarded protocol secure cookies client ip https",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/express/playbook.md"
+      ],
+      "heading": "## 3. HTTPS cookies or client IP differ behind a proxy",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "express-boundary",
+      "domain": "integration",
+      "keywords": "raw body signature whitespace webhook hmac buffer bytes json parser middleware",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/express/boundary-case.md"
+      ],
+      "heading": "# Express: Webhook signature fails only through the full middleware stack",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

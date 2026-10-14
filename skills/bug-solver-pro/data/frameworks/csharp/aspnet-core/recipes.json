@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "csharp",
+  "framework": "aspnet-core",
+  "recipes": [
+    {
+      "id": "aspnet-core-recipe-01",
+      "domain": "lifecycle",
+      "keywords": "request scope disposed background fire forget httpcontext captured service",
+      "references": [
+        "references/languages/csharp/frameworks/aspnet-core/playbook.md"
+      ],
+      "heading": "## 1. Background work fails after the response",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "aspnet-core-recipe-02",
+      "domain": "concurrency",
+      "keywords": "dbcontext parallel task whenall second operation concurrent query ef core",
+      "references": [
+        "references/languages/csharp/frameworks/aspnet-core/playbook.md"
+      ],
+      "heading": "## 2. Parallel queries report a second operation on DbContext",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "aspnet-core-recipe-03",
+      "domain": "control-flow",
+      "keywords": "response hasstarted headers stream error middleware writes status",
+      "references": [
+        "references/languages/csharp/frameworks/aspnet-core/playbook.md"
+      ],
+      "heading": "## 3. Error middleware cannot change status or headers",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "aspnet-core-boundary",
+      "domain": "state",
+      "keywords": "filtered include navigation fixup tracked entities query graph wrong rows ef core",
+      "references": [
+        "references/languages/csharp/frameworks/aspnet-core/boundary-case.md"
+      ],
+      "heading": "# ASP.NET Core: Filtered Include returns entities outside the filter",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

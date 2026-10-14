@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "rust",
+  "framework": "axum",
+  "recipes": [
+    {
+      "id": "axum-recipe-01",
+      "domain": "integration",
+      "keywords": "extractor body consumed order last json stream request parts",
+      "references": [
+        "references/languages/rust/frameworks/axum/playbook.md"
+      ],
+      "heading": "## 1. Handler signature fails or body is unexpectedly unavailable",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "axum-recipe-02",
+      "domain": "lifecycle",
+      "keywords": "router layer routes registered before middleware missing protection",
+      "references": [
+        "references/languages/rust/frameworks/axum/playbook.md"
+      ],
+      "heading": "## 2. New routes silently miss an existing middleware layer",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "axum-recipe-03",
+      "domain": "contracts",
+      "keywords": "json rejection invalid input extractor handler custom error response",
+      "references": [
+        "references/languages/rust/frameworks/axum/playbook.md"
+      ],
+      "heading": "## 3. Invalid input bypasses the handler's custom error response",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "axum-boundary",
+      "domain": "contracts",
+      "keywords": "route layer fallback unknown url 404 401 authentication scope matched routes",
+      "references": [
+        "references/languages/rust/frameworks/axum/boundary-case.md"
+      ],
+      "heading": "# Axum: Adding authentication changes unknown URLs from 404 to 401",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

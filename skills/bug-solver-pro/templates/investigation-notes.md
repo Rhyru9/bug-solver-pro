@@ -23,6 +23,8 @@ Choose sections that support decisions; omit others. Working notes do not have t
 
 Status: VERIFIED (what/context/evidence), ASSUMED, REJECTED, INCONCLUSIVE. Distinguish documented contracts from evidence of application causality.
 
+For consequential probes, record applicability/prerequisites, actual trigger activation, observer sensitivity, and comparable initial state. An untriggered or insensitive pass is inconclusive. Count user actions, submissions, attempts, commits, and effects separately when multiplicity matters. If mechanisms interact, record which combination was tested and the first shared boundary that failed.
+
 ## Causal explanation
 - First invariant violation and mechanism:
 - Triggers/contributing factors:

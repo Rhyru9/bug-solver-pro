@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "javascript-typescript",
+  "framework": "svelte",
+  "recipes": [
+    {
+      "id": "svelte-recipe-01",
+      "domain": "representation",
+      "keywords": "state rune proxy destructure primitive snapshot stale binding",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/svelte/playbook.md"
+      ],
+      "heading": "## 1. A variable copied out of $state stops tracking updates",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "svelte-recipe-02",
+      "domain": "control-flow",
+      "keywords": "derived computed value plain initialization runes dependency",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/svelte/playbook.md"
+      ],
+      "heading": "## 2. A computed label updates only once",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "svelte-recipe-03",
+      "domain": "lifecycle",
+      "keywords": "effect browser ssr missing server data cleanup hydration",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/svelte/playbook.md"
+      ],
+      "heading": "## 3. SSR output lacks data populated by $effect",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "svelte-boundary",
+      "domain": "control-flow",
+      "keywords": "effect async dependency await late read tracking synchronous capture",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/svelte/boundary-case.md"
+      ],
+      "heading": "# Svelte: An effect ignores a value read after await",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

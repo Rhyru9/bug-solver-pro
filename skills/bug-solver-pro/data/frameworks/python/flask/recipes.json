@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "python",
+  "framework": "flask",
+  "recipes": [
+    {
+      "id": "flask-recipe-01",
+      "domain": "lifecycle",
+      "keywords": "working outside request context proxy worker background job request",
+      "references": [
+        "references/languages/python/frameworks/flask/playbook.md"
+      ],
+      "heading": "## 1. Worker raises Working outside of request context",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "flask-recipe-02",
+      "domain": "lifecycle",
+      "keywords": "application factory init app extension first config test contamination",
+      "references": [
+        "references/languages/python/frameworks/flask/playbook.md"
+      ],
+      "heading": "## 2. Tests contaminate each other across app factories",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "flask-recipe-03",
+      "domain": "lifecycle",
+      "keywords": "teardown partial setup cleanup masks original exception acquisition failed",
+      "references": [
+        "references/languages/python/frameworks/flask/playbook.md"
+      ],
+      "heading": "## 3. Teardown crashes before the intended error is reported",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "flask-boundary",
+      "domain": "concurrency",
+      "keywords": "concurrent session updates lost cookie save order parallel overwrite",
+      "references": [
+        "references/languages/python/frameworks/flask/boundary-case.md"
+      ],
+      "heading": "# Flask: Two successful requests lose one session update",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

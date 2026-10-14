@@ -2,6 +2,8 @@
 
 Challenge assumptions when moving between languages/frameworks/libraries. These are investigation questions, not universal product claims. Discover actual-version answers through [14-stack-semantics](14-stack-semantics.md) and [13-research-adaptive](13-research-adaptive.md).
 
+Use the [language/framework index](languages/index.md) for stack-specific questions. This table retains mechanisms shared across stacks; put maintained language/framework details in their own module directories.
+
 | Appearance | Assumption to test | Discriminating question |
 |---|---|---|
 | Null checks/defaults resolve errors | Missing values are legitimate | Optional, not loaded, parse failure, or fetch failure? |

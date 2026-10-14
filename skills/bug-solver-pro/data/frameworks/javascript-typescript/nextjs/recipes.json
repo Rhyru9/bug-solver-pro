@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "javascript-typescript",
+  "framework": "nextjs",
+  "recipes": [
+    {
+      "id": "nextjs-recipe-01",
+      "domain": "state",
+      "keywords": "router refresh stale cache invalidation server rsc tag path fetch",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/nextjs/playbook.md"
+      ],
+      "heading": "## 1. router.refresh still shows old data",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "nextjs-recipe-02",
+      "domain": "control-flow",
+      "keywords": "redirect caught exception successful mutation error next redirect control flow",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/nextjs/playbook.md"
+      ],
+      "heading": "## 2. Successful mutation ends as an error instead of redirecting",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "nextjs-recipe-03",
+      "domain": "representation",
+      "keywords": "hydration mismatch server client locale date html browser direct load",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/nextjs/playbook.md"
+      ],
+      "heading": "## 3. Hydration mismatch appears only on direct load",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "nextjs-boundary",
+      "domain": "security",
+      "keywords": "server action authorization hidden button actor resource policy direct invocation",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/nextjs/boundary-case.md"
+      ],
+      "heading": "# Next.js: A hidden button still allows a server-side mutation",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

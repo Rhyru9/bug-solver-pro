@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "java",
+  "framework": "spring",
+  "recipes": [
+    {
+      "id": "spring-recipe-01",
+      "domain": "concurrency",
+      "keywords": "transactional self invocation internal proxy bypass requires new propagation",
+      "references": [
+        "references/languages/java/frameworks/spring/playbook.md"
+      ],
+      "heading": "## 1. Internal Transactional call ignores the requested boundary",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "spring-recipe-02",
+      "domain": "concurrency",
+      "keywords": "checked exception rollback writes committed transaction rules catch",
+      "references": [
+        "references/languages/java/frameworks/spring/playbook.md"
+      ],
+      "heading": "## 2. An exception is thrown but writes commit",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "spring-recipe-03",
+      "domain": "lifecycle",
+      "keywords": "final private method subclass proxy advice interception jdk bean",
+      "references": [
+        "references/languages/java/frameworks/spring/playbook.md"
+      ],
+      "heading": "## 3. Advice applies to some methods but misses a final method",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "spring-boundary",
+      "domain": "performance",
+      "keywords": "requires new connection pool deadlock exhaustion nested transaction outer holds",
+      "references": [
+        "references/languages/java/frameworks/spring/boundary-case.md"
+      ],
+      "heading": "# Spring: REQUIRES_NEW causes a stall only under load",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

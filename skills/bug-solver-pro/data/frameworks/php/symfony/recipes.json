@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "php",
+  "framework": "symfony",
+  "recipes": [
+    {
+      "id": "symfony-recipe-01",
+      "domain": "lifecycle",
+      "keywords": "autowiring interface alias wrong service container debug implementation",
+      "references": [
+        "references/languages/php/frameworks/symfony/playbook.md"
+      ],
+      "heading": "## 1. Autowiring injects a valid but wrong implementation",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "symfony-recipe-02",
+      "domain": "concurrency",
+      "keywords": "messenger redelivery ack idempotency repeated message effect crash",
+      "references": [
+        "references/languages/php/frameworks/symfony/playbook.md"
+      ],
+      "heading": "## 2. Message effects repeat even though the handler succeeded",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "symfony-recipe-03",
+      "domain": "lifecycle",
+      "keywords": "messenger worker reset state services tenant reused messages",
+      "references": [
+        "references/languages/php/frameworks/symfony/playbook.md"
+      ],
+      "heading": "## 3. Second message inherits state from the first",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "symfony-boundary",
+      "domain": "state",
+      "keywords": "doctrine identity map persist flush commit managed entity database independent read",
+      "references": [
+        "references/languages/php/frameworks/symfony/boundary-case.md"
+      ],
+      "heading": "# Symfony: Repository read appears to prove a write that never reached the database",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

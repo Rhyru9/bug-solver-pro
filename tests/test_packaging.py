@@ -60,10 +60,24 @@ class PackagingTests(unittest.TestCase):
                 skill = extracted / ("bug-solver-pro" if index == 0 else "skills/bug-solver-pro")
                 self.assertEqual((skill / "LICENSE").read_bytes(), (ROOT / "LICENSE").read_bytes())
                 result = subprocess.run([sys.executable, "-B", str(skill / "scripts/search.py"),
-                                         "webhook retry", "--plan", "--json"],
+                                         "webhook retry", "--framework", "Spring Boot", "--plan", "--json"],
                                         cwd=root, capture_output=True, text=True, check=True)
                 plan = json.loads(result.stdout)
                 self.assertEqual(plan["results"][0]["id"], "duplicate-delivery")
+                context = plan["framework_context"]
+                self.assertEqual(context["framework"], "spring")
+                self.assertEqual(context["playbook"],
+                                 (skill / context["resources"]["playbook"]).read_text(encoding="utf-8"))
+                self.assertEqual(context["boundary_case"],
+                                 (skill / context["resources"]["boundary-case"]).read_text(encoding="utf-8"))
+                recipe_result = subprocess.run(
+                    [sys.executable, "-B", str(skill / "scripts/search.py"),
+                     "body signature whitespace", "--json"],
+                    cwd=root, capture_output=True, text=True, check=True)
+                hit = json.loads(recipe_result.stdout)["framework_matches"]["results"][0]
+                self.assertEqual(hit["id"], "express-boundary")
+                self.assertEqual(hit["content"],
+                                 (skill / hit["references"][0]).read_text(encoding="utf-8").strip())
                 if index == 1:
                     plugin = json.loads((extracted / ".claude-plugin/plugin.json").read_text())
                     self.assertEqual(plugin["name"], "bug-solver-pro")

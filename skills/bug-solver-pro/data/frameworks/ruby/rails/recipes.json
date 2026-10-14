@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "ruby",
+  "framework": "rails",
+  "recipes": [
+    {
+      "id": "rails-recipe-01",
+      "domain": "lifecycle",
+      "keywords": "update all update_all bulk callbacks validations skipped model",
+      "references": [
+        "references/languages/ruby/frameworks/rails/playbook.md"
+      ],
+      "heading": "## 1. Bulk maintenance bypasses callbacks or validations",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "rails-recipe-02",
+      "domain": "concurrency",
+      "keywords": "after save after commit notification rollback event side effect",
+      "references": [
+        "references/languages/ruby/frameworks/rails/playbook.md"
+      ],
+      "heading": "## 2. Notification is sent for a transaction that later rolls back",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "rails-recipe-03",
+      "domain": "performance",
+      "keywords": "eager loading n1 query count association scoped preload includes",
+      "references": [
+        "references/languages/ruby/frameworks/rails/playbook.md"
+      ],
+      "heading": "## 3. Eager loading is present but query count still grows per row",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "rails-boundary",
+      "domain": "concurrency",
+      "keywords": "optimistic locking stale edit lock version staleobjecterror overwrite",
+      "references": [
+        "references/languages/ruby/frameworks/rails/boundary-case.md"
+      ],
+      "heading": "# Rails: A stale edit silently replaces a newer one",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

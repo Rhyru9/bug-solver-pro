@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "javascript-typescript",
+  "framework": "sveltekit",
+  "recipes": [
+    {
+      "id": "sveltekit-recipe-01",
+      "domain": "state",
+      "keywords": "server writable store global user request leak state load",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/sveltekit/playbook.md"
+      ],
+      "heading": "## 1. Server-side store leaks data between users",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "sveltekit-recipe-02",
+      "domain": "performance",
+      "keywords": "await parent waterfall child load independent fetch serial latency",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/sveltekit/playbook.md"
+      ],
+      "heading": "## 2. Child route waits for unrelated parent work",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "sveltekit-recipe-03",
+      "domain": "control-flow",
+      "keywords": "load url params tracking depends invalidate navigation stale",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/sveltekit/playbook.md"
+      ],
+      "heading": "## 3. Navigation leaves load data stale although the URL changed",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "sveltekit-boundary",
+      "domain": "control-flow",
+      "keywords": "enhance custom callback update form action success invalidation stale ui",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/sveltekit/boundary-case.md"
+      ],
+      "heading": "# SvelteKit: Enhanced form succeeds but the page does not update",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

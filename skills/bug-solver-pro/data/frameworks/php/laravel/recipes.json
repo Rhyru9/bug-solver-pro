@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "php",
+  "framework": "laravel",
+  "recipes": [
+    {
+      "id": "laravel-recipe-01",
+      "domain": "concurrency",
+      "keywords": "queue after commit job missing record transaction visibility dispatch race",
+      "references": [
+        "references/languages/php/frameworks/laravel/playbook.md"
+      ],
+      "heading": "## 1. Queue job cannot see a just-created record",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "laravel-recipe-02",
+      "domain": "state",
+      "keywords": "queued eloquent model serialized identifier reloaded snapshot relation changed",
+      "references": [
+        "references/languages/php/frameworks/laravel/playbook.md"
+      ],
+      "heading": "## 2. Queued model contains later values, not dispatch-time values",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "laravel-recipe-03",
+      "domain": "lifecycle",
+      "keywords": "mass update observers events save bulk skipped lifecycle",
+      "references": [
+        "references/languages/php/frameworks/laravel/playbook.md"
+      ],
+      "heading": "## 3. Mass update changes rows without running observers",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "laravel-boundary",
+      "domain": "security",
+      "keywords": "orwhere tenant scope query boolean precedence grouping foreign data",
+      "references": [
+        "references/languages/php/frameworks/laravel/boundary-case.md"
+      ],
+      "heading": "# Laravel: Adding an orWhere widens a tenant-scoped query",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

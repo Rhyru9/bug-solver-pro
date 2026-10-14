@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "python",
+  "framework": "django",
+  "recipes": [
+    {
+      "id": "django-recipe-01",
+      "domain": "lifecycle",
+      "keywords": "queryset update bulk create skips save signals observer events",
+      "references": [
+        "references/languages/python/frameworks/django/playbook.md"
+      ],
+      "heading": "## 1. Bulk updates silently omit business effects",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "django-recipe-02",
+      "domain": "testing",
+      "keywords": "on commit callback testcase transaction test capture execute rollback",
+      "references": [
+        "references/languages/python/frameworks/django/playbook.md"
+      ],
+      "heading": "## 2. on_commit never runs in a passing test",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "django-recipe-03",
+      "domain": "concurrency",
+      "keywords": "integrityerror atomic broken transaction savepoint catch database error",
+      "references": [
+        "references/languages/python/frameworks/django/playbook.md"
+      ],
+      "heading": "## 3. Catching a database error causes later transaction failures",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "django-boundary",
+      "domain": "concurrency",
+      "keywords": "get or create get_or_create uniqueness constraint concurrent duplicate rows",
+      "references": [
+        "references/languages/python/frameworks/django/boundary-case.md"
+      ],
+      "heading": "# Django: get_or_create still inserts duplicates under concurrency",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

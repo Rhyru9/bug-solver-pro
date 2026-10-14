@@ -1,190 +1,131 @@
 # bug-solver-pro
 
-An installable agent skill for diagnosing and fixing backend and application logic bugs across languages and frameworks. The skill and repository are both named **`bug-solver-pro`**.
+`bug-solver-pro` gives a coding agent a way to investigate backend and application logic bugs: trace the failing path, test an explanation, then verify the repair. It combines a debugging workflow with local framework playbooks and searchable diagnostic knowledge.
 
-Canonical repository: [Rhyru9/bug-solver-pro](https://github.com/Rhyru9/bug-solver-pro). [Report an issue](https://github.com/Rhyru9/bug-solver-pro/issues) or browse [releases](https://github.com/Rhyru9/bug-solver-pro/releases).
+Consider a webhook that sends the same notification twice. The first request may have committed successfully before its response was lost. A retry then repeats the effect. To choose a repair, the agent needs to distinguish two submissions from two attempts at the same operation, find where the duplicate becomes possible, and check what happens after a crash.
 
-Install with [Skills CLI](https://github.com/vercel-labs/skills). Node.js and npm (which includes `npx`) are required. The first run downloads the CLI. There is no separate npm package named `bug-solver-pro`.
+This skill guides that investigation. Use it for incorrect results, inconsistent state, races, failed integrations, resource problems, and bugs that return after an apparently successful patch. Its scope is debugging existing behavior; new feature planning belongs elsewhere.
 
-Commands below use `npx skills` (latest CLI). To pin a known version, insert `@1.7.2` after `skills` (the version these examples were checked against):
+## How an investigation works
 
-```bash
-npx skills@1.7.2 add Rhyru9/bug-solver-pro --skill bug-solver-pro
-```
+Start by giving the agent the failure you observed and the behavior you expected. For the webhook example, that might be:
+
+> Replaying the same webhook sends another notification. Each event should notify once. Use bug-solver-pro to investigate, fix it, and verify retry behavior.
+
+The workflow asks the agent to follow the operation through its real entrypoint, database changes, queue, and external effects. It separates the logical event from individual delivery attempts, then looks for the first boundary where the promised behavior breaks.
+
+A candidate explanation needs a useful test. The agent might replay one event with a lost acknowledgement after the first effect, then inspect durable state and notification counts. A passing test only rules out that explanation when the relevant retry occurred and the test could detect a duplicate.
+
+Once the evidence supports a cause, the agent repairs the boundary that owns the invariant and checks the original trigger, nearby valid behavior, and relevant failure paths. For this example, recording an operation key after sending the notification would still leave a crash window. The repair has to account for the actual transaction and delivery guarantees.
+
+The result should explain the cause, the change, what was tested, and what remains uncertain. When reproduction is unavailable, the agent can work from incident evidence and report a candidate fix with its limits.
+
+## Knowledge for your stack
+
+Framework playbooks make that workflow concrete. They cover traps such as Spring calls bypassing transaction advice, React drafts following the wrong list keys, Django bulk writes skipping model hooks, and an Express parser consuming bytes needed for webhook verification.
+
+Each framework has local recipes with a mechanism, a probe, observations that would contradict it, repair options, and regression checks. A deeper boundary case examines an additional trap and the tempting fixes that can make it worse. Official documentation supports unresolved contracts and version differences.
+
+| Language | Frameworks and libraries with local guidance |
+|---|---|
+| JavaScript / TypeScript | Express, NestJS, React, Next.js, Vue, Nuxt, Svelte, SvelteKit, Angular, Hono |
+| Python | Django, FastAPI, Flask |
+| PHP | Laravel, Symfony |
+| Java | Spring |
+| C# / .NET | ASP.NET Core, including EF Core boundary cases |
+| Go | Gin, Echo |
+| Rust | Axum, Actix Web |
+| Ruby | Rails |
+
+The [framework index](skills/bug-solver-pro/references/frameworks/index.md) leads to 88 techniques across these 22 modules. A shared catalog adds 54 diagnostic patterns, while 20 observation angles help investigate bugs outside the recorded examples. For an unfamiliar stack, the workflow starts from its actual execution and dependency semantics.
+
+These are authored techniques supported by contracts and specific probes. The [coverage audit](skills/bug-solver-pro/references/coverage/gap-audit.md) and [data audit](skills/bug-solver-pro/references/coverage/data-audit.md) record their evidence and remaining gaps. Executed FastAPI and SQLite fixtures check a few bounded cases; they do not establish debugging quality for every framework, version, or agent.
 
 ## Install from GitHub
 
-Run these commands from the project where the skill should be used:
+Run the installer from the application project where you want to use the skill. It requires Node.js and npm; `npx` fetches the [Skills CLI](https://github.com/vercel-labs/skills), which installs the skill from this repository.
 
 ```bash
-# Install in the current project; select agents interactively
+# Install for the current project and select your agents
 npx skills add Rhyru9/bug-solver-pro --skill bug-solver-pro
 
-# Install globally for the current user
+# Or install for the current user across projects
 npx skills add Rhyru9/bug-solver-pro --skill bug-solver-pro --global
-
-# The full repository URL also works
-npx skills add https://github.com/Rhyru9/bug-solver-pro --skill bug-solver-pro
 ```
 
-GitHub installation fetches the complete skill directory, including data, scripts, references, and the MIT license. For a private fork, configure GitHub access in the environment before installing.
+<a id="install-for-multiple-agents"></a>
 
-## Install from a local clone
+To select agents without prompts, append `--agent codex claude-code --yes`. The installer supports other hosts too; [COMPATIBILITY.md](COMPATIBILITY.md) explains their target names, locations, and activation. Add `--copy` if you want copied files rather than symlinks.
 
-Run these commands from the **destination project** (the app being debugged). Replace `/path/to/bug-solver-pro` with the absolute path of the cloned skill repository.
+<a id="install-from-a-local-clone"></a>
 
-```bash
-# Install for the current project
-npx skills add /path/to/bug-solver-pro --skill bug-solver-pro
-
-# Install globally for the current user, across projects
-npx skills add /path/to/bug-solver-pro --skill bug-solver-pro --global
-```
-
-The CLI prompts for target agents. To choose them explicitly and skip prompts:
-
-```bash
-# Current project: Codex and Claude Code
-npx skills add /path/to/bug-solver-pro --skill bug-solver-pro --agent codex claude-code --yes
-
-# Global: Codex and Claude Code
-npx skills add /path/to/bug-solver-pro --skill bug-solver-pro --agent codex claude-code --global --yes
-```
-
-Use `--copy` for copied files instead of agent-directory symlinks. All references, templates, and helper scripts ship with the skill.
-
-## Verify and use
-
-```bash
-# List skills in the published repository without installing
-npx skills add Rhyru9/bug-solver-pro --list
-
-# List installed skills in the current project
-npx skills list
-
-# List globally installed skills
-npx skills list --global
-```
-
-In Codex, invoke `$bug-solver-pro`; in Claude Code, invoke `/bug-solver-pro`. Agents can also select it when the request matches its description. Invocation and discovery differ between products; see [agent compatibility](COMPATIBILITY.md).
-
-Project installation applies to the project where the install command runs. Global installation applies to the current user. Destination directories depend on the selected agent; see the CLI's [supported agents](https://github.com/vercel-labs/skills#supported-agents).
+If you are developing this repository, run `npx skills add /path/to/bug-solver-pro --skill bug-solver-pro` from the destination application project. Install the complete skill folder so its data, scripts, and relative references travel together.
 
 ## After install
 
-Ask the agent to use the skill on a real failure:
+<a id="verify-and-use"></a>
 
-> Investigate why replayed webhook retries send duplicate notifications. Use bug-solver-pro.
+Ask your agent to use `bug-solver-pro` with a concrete failure, as in the webhook example above. Direct skill installations use `$bug-solver-pro` in Codex and `/bug-solver-pro` in Claude Code. Other hosts have their own discovery and invocation rules.
 
-A useful answer names expected versus actual behavior, the suspected invariant, a discriminating experiment, and the evidence limits. Catalog hits are leads.
+You can check project installations with `npx skills list`, or user installations with `npx skills list --global`. If the skill is missing from the agent's session, follow its reload/discovery steps in [COMPATIBILITY.md](COMPATIBILITY.md).
 
-If Python 3.9+ is available, run the installed search from the destination project. Replace `<skill-root>` with the installed `bug-solver-pro` folder (typical paths are in [COMPATIBILITY.md](COMPATIBILITY.md)):
+Python is optional for the written workflow. The agent can inspect the local guides and use the application's existing tools without running the bundled search.
+
+## Claude Code plugin and marketplace
+
+Claude Code users can also install the same skill through this repository's marketplace:
 
 ```bash
-python3 "<skill-root>/scripts/search.py" "replayed webhook retry duplicate notification" --plan
+claude plugin marketplace add Rhyru9/bug-solver-pro
+claude plugin install bug-solver-pro@rhyru9-skills
 ```
 
-If `python3` is missing, use `python` or `py -3`.
+This route uses `/bug-solver-pro:bug-solver-pro`. Add `--scope project` to the install command for project scope. Choose either the direct skill or the marketplace plugin so the workflow has one installation source. See [Claude's marketplace guide](https://code.claude.com/docs/en/plugin-marketplaces) for host-specific behavior.
+
+## Structured diagnostic tooling
+
+The optional search runs locally with Python 3.9+ and its standard library. Replace `<skill-root>` with the installed directory containing `SKILL.md`; run the script through that path from the application you are debugging.
+
+```bash
+python3 "<skill-root>/scripts/search.py" "duplicate webhook retry" --plan
+python3 "<skill-root>/scripts/search.py" "body signature whitespace" --framework Express --json
+python3 "<skill-root>/scripts/search.py" "unexplained boundary failure" --explore
+```
+
+Use a few sanitized English symptom terms. Search returns shared mechanisms and matching local framework sections. `--framework` restricts recipe leads to the named stack and includes its full local playbook. `--plan` adds candidate experiments; `--explore` supplies observation angles without generating hypotheses. If your interpreter is named `python` or `py -3`, use that instead.
+
+A search result is a lead to inspect. Scores measure word overlap, and a strong match still needs code and evidence. JSON keeps shared-catalog status separate from `framework_matches`, so a missing shared pattern can coexist with a useful framework recipe. The [tooling reference](skills/bug-solver-pro/references/17-structured-tooling.md) describes the output, filters, validation, and limits.
 
 ## Upgrade and remove
+
+For a Skills CLI installation, update from the destination project or the appropriate user scope:
 
 ```bash
 npx skills update
 npx skills remove bug-solver-pro
-npx skills remove bug-solver-pro --global
 ```
 
-The same pin works here: `npx skills@1.7.2 update` or `npx skills@1.7.2 remove bug-solver-pro`.
+Use `--global` when removing a user-level installation. Installer commands follow the current Skills CLI; the older `skills@1.7.2` examples in the compatibility guide provide a pinned reference.
 
-Claude Code marketplace installs are separate from `npx skills add`. Remove the plugin in Claude Code if that route was used, so two copies of the workflow are not left behind.
-
-## Claude Code plugin and marketplace
-
-This repository also packages the skill as the `bug-solver-pro` Claude Code plugin, owned by Rhyru9, in the `rhyru9-skills` marketplace. Metadata lives in [.claude-plugin/plugin.json](.claude-plugin/plugin.json) and [.claude-plugin/marketplace.json](.claude-plugin/marketplace.json). The plugin loads the existing root `skills/` directory using Claude Code's standard layout.
+For a marketplace installation, refresh its catalog, update the plugin, then restart Claude Code:
 
 ```bash
-# Register the GitHub repository as a marketplace
-claude plugin marketplace add Rhyru9/bug-solver-pro
-
-# Install for the current user (default scope)
-claude plugin install bug-solver-pro@rhyru9-skills
-
-# Install for the current destination project
-claude plugin install bug-solver-pro@rhyru9-skills --scope project
+claude plugin marketplace update rhyru9-skills
+claude plugin update bug-solver-pro@rhyru9-skills
 ```
 
-Invoke the plugin skill as `/bug-solver-pro:bug-solver-pro`. Direct installation through `npx skills add` uses `/bug-solver-pro`. Pick one route in Claude Code so the same workflow is not loaded twice.
+Package version 1.1.0 keeps the skill name, installation layout, existing search flags, shared data schema, and shared result fields. It adds framework recipe results and `--framework`; JSON consumers should tolerate the additional fields. Reinstall or update the whole skill rather than copying individual new scripts into an older installation.
 
-To register a local clone as a marketplace:
+## Extend the skill
 
-```bash
-claude plugin marketplace add /path/to/bug-solver-pro
-```
+<a id="skill-contents"></a>
 
-See the official [marketplace guide](https://code.claude.com/docs/en/plugin-marketplaces) and [plugin manifest reference](https://code.claude.com/docs/en/plugins-reference).
+The entrypoint is [SKILL.md](skills/bug-solver-pro/SKILL.md). Shared reasoning lives in `references/`; language and framework guides live beneath `references/languages/`. Framework retrieval metadata lives in `data/frameworks/<language>/<framework>/recipes.json` and points to the local Markdown that owns the technique.
 
-## Install for multiple agents
+To add coverage, start with a concrete debugging gap and the [module template](skills/bug-solver-pro/templates/stack-module.md). Include a discriminator, repair tradeoffs, verification, and evidence limits. Update the index when changing a recipe's heading. The [.github contributor guide](.github/CONTRIBUTING.md) covers data contracts, validation, and building installable ZIPs.
 
-The same skill package can target many agents through Skills CLI, including Claude Code, Codex, Cursor, Gemini CLI, OpenCode, GitHub Copilot CLI, OpenClaw, and Hermes Agent. These are examples, not a fixed allowlist:
-
-```bash
-# From the destination project
-npx skills add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent claude-code codex cursor gemini-cli opencode github-copilot --yes
-
-# Same agents, globally
-npx skills add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent claude-code codex cursor gemini-cli opencode github-copilot --global --yes
-
-# OpenClaw and Hermes Agent, from the destination project/workspace
-npx skills add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent openclaw hermes-agent --yes
-
-# OpenClaw and Hermes Agent, globally
-npx skills add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent openclaw hermes-agent --global --yes
-
-# GitHub Copilot CLI uses the github-copilot installer target
-npx skills add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent github-copilot --yes
-
-# Every agent supported by the installed CLI
-npx skills add Rhyru9/bug-solver-pro --skill bug-solver-pro --agent '*' --yes
-```
-
-The wildcard includes agents the reader may not use; an explicit list is safer. Add `--global` to the wildcard command for user-level installation. Other targets include Goose, Pi, Kimi Code CLI, Qwen Code, Roo Code, Windsurf, and more; the complete list is in the [Skills CLI README](https://github.com/vercel-labs/skills#supported-agents). See [COMPATIBILITY.md](COMPATIBILITY.md) for directories, invocation, OpenClaw workspace selection, Hermes project trust, helper requirements, and known limits.
-
-For Copilot CLI, run `/skills reload` and `/skills info bug-solver-pro` inside an existing session after installation. Invoke `/bug-solver-pro` in the prompt. See the [official Copilot CLI skill guide](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills).
-
-## Skill contents
-
-The discoverable entrypoint lives at [skills/bug-solver-pro/SKILL.md](skills/bug-solver-pro/SKILL.md). Supporting files stay alongside it so relative links work after installation.
-
-```text
-skills/bug-solver-pro/
-├── SKILL.md
-├── README.md
-├── data/
-│   ├── patterns.json
-│   └── angles.json
-├── references/
-├── templates/
-└── scripts/
-```
-
-See the [skill overview](skills/bug-solver-pro/README.md) for the workflow.
-
-## Structured diagnostic tooling
-
-The package includes 48 structured heuristic patterns across eleven domains, covering representation, lifecycle, control flow, concurrency, persistence, contracts, integration, access decisions, performance, testing, and diagnosis. Local lexical search returns candidate mechanisms with experiments, falsifying observations, verification checks, and references. Fourteen observation angles support investigation beyond the recorded catalog.
-
-Requires Python 3.9+; no pip dependencies or network calls. Replace `<skill-root>` with the installed folder that contains `SKILL.md`. If `python3` is missing, use `python` or `py -3`:
-
-```bash
-python3 "<skill-root>/scripts/search.py" "duplicate webhook retry" --domain concurrency
-python3 "<skill-root>/scripts/search.py" "memory retained listeners" --plan --json
-python3 "<skill-root>/scripts/search.py" "unexplained boundary failure" --explore --json
-```
-
-Search scores describe lexical relevance, not causal confidence. Missing or weak matches route to open-world exploration. Use sanitized English keywords. Catalog seeds are curated from bundled references; they are not verified incident cases. [Structured tooling](skills/bug-solver-pro/references/17-structured-tooling.md) describes the schema; [coverage and unknowns](skills/bug-solver-pro/references/18-coverage-and-unknowns.md) covers unrecorded bugs and interacting mechanisms.
-
-Issue reports, diagnostic coverage gaps, and contributor checks are in the [.github contributor guide](.github/CONTRIBUTING.md). User-visible changes are listed in [CHANGELOG.md](CHANGELOG.md).
+Report a bug or missing diagnostic angle in [GitHub issues](https://github.com/Rhyru9/bug-solver-pro/issues). Changes are recorded in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
-[MIT](LICENSE), copyright (c) 2026 Rhyru9. A copy is bundled in the [skill directory](skills/bug-solver-pro/LICENSE) so standalone skill installation carries its license notice.
+[MIT](LICENSE), copyright (c) 2026 Rhyru9. The license is also bundled in the standalone [skill folder](skills/bug-solver-pro/LICENSE).

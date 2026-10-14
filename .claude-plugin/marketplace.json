@@ -13,7 +13,7 @@
       "source": "./",
       "homepage": "https://github.com/Rhyru9/bug-solver-pro",
       "repository": "https://github.com/Rhyru9/bug-solver-pro",
-      "description": "Investigate and fix backend or application logic bugs through flow mapping, testable hypotheses, structured mechanism search, and regression verification."
+      "description": "Investigate backend and application bugs using framework playbooks, causal experiments, local symptom search, and regression checks."
     }
   ]
 }

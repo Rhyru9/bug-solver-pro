@@ -2,6 +2,8 @@
 
 Use when languages, frameworks, libraries, runtime modes, or versions are unfamiliar. Build enough of an execution model to diagnose the bug; a list of languages does not limit this skill's scope.
 
+For maintained stack-specific questions, select a language and its framework modules from the [module index](languages/index.md). Read only modules implicated by the failing path. Use this workflow for shared semantic discovery and stacks without a module.
+
 ## Start with the actual system
 
 Manifests express intent; lockfiles, installed packages, build artifacts, and running processes provide different evidence. Record relevant versions/features, build modes, OS/architecture where influential, effective configuration, and process topology. Ensure tests and incidents execute the code being compared. Consider code generation, transpilation, plugins, wrappers, vendor patches, and configuration changing defaults.
@@ -37,4 +39,4 @@ Choose dimensions involved in the bug; not every dimension requires inspection.
 
 Text searches find candidates; language servers/call hierarchies assist static binding; debuggers/tracing reveal dynamic paths; schemas/registries reveal consumers outside code. Source maps/debug symbols connect artifacts with source. Choose available tools and state their blind spots.
 
-Do not add every newly encountered framework to a catalog. Retain lessons as mechanism + prerequisites + evidence; version details belong in authorized learned cases.
+During application debugging, do not add every newly encountered framework to the skill. When skill maintenance is authorized, extend the appropriate language/framework directory using the [module index](languages/index.md) and [module template](../templates/stack-module.md). Retain incident lessons as mechanism + prerequisites + evidence in authorized learned cases; keep reusable diagnostic questions in the stack module.

@@ -77,6 +77,12 @@ Catalog data, script output and instructions are in English. Use sanitized Engli
 
 `find-usages.sh` treats symbols literally, skips the same credential-like names, and distinguishes tool failure from no matches. `co-change.sh` handles terminated commit records and valid empty results; paths requiring Git quoting or historical names across renames still need manual review. The current suite checks these helpers on local fixtures, not every OS or Git/search-tool variant.
 
+## Updating from 1.0.x
+
+Version 1.1.0 preserves the skill name, standard installation layout, existing search flags, shared catalog/angle schema version 1, and shared JSON result fields. The CLI additionally returns `framework_matches`; `--framework` scopes those recipe leads and loads local module context. Lexical rankings can change as the catalog grows. JSON consumers should accept additional fields and distinguish shared status from recipe status.
+
+Update the complete skill directory so scripts, indexes, and Markdown sections remain aligned. Existing Skills CLI installations can use `npx skills update` in the intended scope. For the Claude marketplace route, run `claude plugin marketplace update rhyru9-skills`, then `claude plugin update bug-solver-pro@rhyru9-skills` and restart the host. The plugin manifest version advances to 1.1.0 for this package update.
+
 ## Known limits
 
 - CI checks package metadata, Markdown links, catalog schema, retrieval ranking, and extracted ZIP behavior.

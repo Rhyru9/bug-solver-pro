@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "go",
+  "framework": "echo",
+  "recipes": [
+    {
+      "id": "echo-recipe-01",
+      "domain": "lifecycle",
+      "keywords": "context goroutine request lifetime response writer shared race",
+      "references": [
+        "references/languages/go/frameworks/echo/playbook.md"
+      ],
+      "heading": "## 1. A goroutine reads the wrong request or races",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "echo-recipe-02",
+      "domain": "security",
+      "keywords": "binding body overrides path id authoritative route dto precedence",
+      "references": [
+        "references/languages/go/frameworks/echo/playbook.md"
+      ],
+      "heading": "## 2. Body input replaces an authoritative route ID",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "echo-recipe-03",
+      "domain": "security",
+      "keywords": "binding domain struct internal field flag extra assignment dto allowlist",
+      "references": [
+        "references/languages/go/frameworks/echo/playbook.md"
+      ],
+      "heading": "## 3. Client can set an internal field despite validation passing",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "echo-boundary",
+      "domain": "lifecycle",
+      "keywords": "disconnect request context cancellation downstream background resource pool release",
+      "references": [
+        "references/languages/go/frameworks/echo/boundary-case.md"
+      ],
+      "heading": "# Echo: Client disconnects but downstream calls keep consuming resources",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

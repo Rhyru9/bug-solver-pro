@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "javascript-typescript",
+  "framework": "angular",
+  "recipes": [
+    {
+      "id": "angular-recipe-01",
+      "domain": "integration",
+      "keywords": "httpclient cold observable duplicate subscriptions async pipe multiple requests",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/angular/playbook.md"
+      ],
+      "heading": "## 1. One UI event makes two HTTP calls",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "angular-recipe-02",
+      "domain": "state",
+      "keywords": "signal equality same reference mutation object update onpush",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/angular/playbook.md"
+      ],
+      "heading": "## 2. Signal data changes internally without notifying consumers",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "angular-recipe-03",
+      "domain": "control-flow",
+      "keywords": "computed dynamic signal dependency conditional branch tracking",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/angular/playbook.md"
+      ],
+      "heading": "## 3. Computed signal stops reacting to one input",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "angular-boundary",
+      "domain": "lifecycle",
+      "keywords": "interceptor retry deep body mutation cloned request array accumulates payload",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/angular/boundary-case.md"
+      ],
+      "heading": "# Angular: An interceptor changes the payload on a retried request",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

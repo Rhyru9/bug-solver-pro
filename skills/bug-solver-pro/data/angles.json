@@ -14,7 +14,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/16-hard-to-trace-debugging.md"
+        "references/16-hard-to-trace-debugging.md",
+        "references/19-causal-decision-procedure.md"
       ]
     },
     {
@@ -29,7 +30,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/16-hard-to-trace-debugging.md"
+        "references/16-hard-to-trace-debugging.md",
+        "references/19-causal-decision-procedure.md"
       ]
     },
     {
@@ -44,7 +46,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/16-hard-to-trace-debugging.md"
+        "references/16-hard-to-trace-debugging.md",
+        "references/19-causal-decision-procedure.md"
       ]
     },
     {
@@ -59,7 +62,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/16-hard-to-trace-debugging.md"
+        "references/16-hard-to-trace-debugging.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ]
     },
     {
@@ -74,7 +79,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/16-hard-to-trace-debugging.md"
+        "references/16-hard-to-trace-debugging.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ]
     },
     {
@@ -89,7 +96,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/16-hard-to-trace-debugging.md"
+        "references/16-hard-to-trace-debugging.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ]
     },
     {
@@ -103,7 +112,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/16-hard-to-trace-debugging.md"
+        "references/16-hard-to-trace-debugging.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ]
     },
     {
@@ -118,7 +129,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/16-hard-to-trace-debugging.md"
+        "references/16-hard-to-trace-debugging.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ]
     },
     {
@@ -133,7 +146,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/16-hard-to-trace-debugging.md"
+        "references/16-hard-to-trace-debugging.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ]
     },
     {
@@ -149,7 +164,9 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/16-hard-to-trace-debugging.md"
+        "references/16-hard-to-trace-debugging.md",
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
       ]
     },
     {
@@ -164,7 +181,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/16-hard-to-trace-debugging.md"
+        "references/16-hard-to-trace-debugging.md",
+        "references/19-causal-decision-procedure.md"
       ]
     },
     {
@@ -179,7 +197,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/16-hard-to-trace-debugging.md"
+        "references/16-hard-to-trace-debugging.md",
+        "references/19-causal-decision-procedure.md"
       ]
     },
     {
@@ -194,7 +213,8 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/16-hard-to-trace-debugging.md"
+        "references/16-hard-to-trace-debugging.md",
+        "references/19-causal-decision-procedure.md"
       ]
     },
     {
@@ -210,7 +230,101 @@
       "references": [
         "references/18-coverage-and-unknowns.md",
         "references/14-stack-semantics.md",
-        "references/16-hard-to-trace-debugging.md"
+        "references/16-hard-to-trace-debugging.md",
+        "references/19-causal-decision-procedure.md"
+      ]
+    },
+    {
+      "id": "probe-validity",
+      "domains": [
+        "diagnosis",
+        "testing"
+      ],
+      "trigger": "A passing probe is being used to reject a hypothesis, but activation or observation is uncertain.",
+      "question": "Did the intended branch/schedule execute, and would the observer detect the predicted violation?",
+      "observation": "Record applicability, trigger activation, observer sensitivity and comparable initial state; use a safe known-bad control when feasible.",
+      "references": [
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
+      ]
+    },
+    {
+      "id": "multiplicity",
+      "domains": [
+        "concurrency",
+        "integration",
+        "control-flow"
+      ],
+      "trigger": "One action produces repeated requests, attempts, commits or effects.",
+      "question": "At which boundary does one logical operation first become several attempts or effects?",
+      "observation": "Trace separate action, submission, attempt, commit and effect IDs/counts; do not equate log count with effect count.",
+      "references": [
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
+      ]
+    },
+    {
+      "id": "composed-guarantees",
+      "domains": [
+        "concurrency",
+        "state",
+        "lifecycle",
+        "security"
+      ],
+      "trigger": "Components work alone but their combined path violates an invariant.",
+      "question": "Which guarantee stops applying across the shared scope, ordering or atomicity boundary?",
+      "observation": "Compare neither/A/B/A+B with equivalent reset state and activated factors; identify the first failed combined guarantee.",
+      "references": [
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
+      ]
+    },
+    {
+      "id": "topology-budget",
+      "domains": [
+        "performance",
+        "lifecycle",
+        "diagnosis"
+      ],
+      "trigger": "More workers or replicas unexpectedly increase resource use or fragment state.",
+      "question": "Is capacity/state scoped per request, worker, pool, process or cluster, and how do those scopes multiply?",
+      "observation": "Record real instance identities, pool limits, worker/replica counts and wait ownership; compare one topology factor at a time.",
+      "references": [
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md"
+      ]
+    },
+    {
+      "id": "query-semantics",
+      "domains": [
+        "representation",
+        "state",
+        "contracts"
+      ],
+      "trigger": "Correct-looking queries produce wrong totals, membership or in-memory graphs.",
+      "question": "Where do row grain, null logic, scope predicates, snapshots or ORM materialization first diverge from the intended dataset?",
+      "observation": "Compare source rows, joined row identities, predicate outcomes, managed entities and wire output using an independent oracle.",
+      "references": [
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md",
+        "references/21-data-and-query-semantics.md"
+      ]
+    },
+    {
+      "id": "data-population-history",
+      "domains": [
+        "state",
+        "contracts",
+        "testing"
+      ],
+      "trigger": "Only some historical cohorts fail despite sharing a current schema.",
+      "question": "Which backfill stage, old writer, default, tombstone or partial update produced the failing data population?",
+      "observation": "Compare sanitized old/new and partial-backfill cohorts under the same build, including active writers; separate code repair from historical data recovery.",
+      "references": [
+        "references/19-causal-decision-procedure.md",
+        "references/20-composed-failures.md",
+        "references/07-data-migrations-cache.md",
+        "references/08-contracts-and-deploy.md"
       ]
     }
   ]

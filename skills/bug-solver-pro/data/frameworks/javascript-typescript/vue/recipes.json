@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "javascript-typescript",
+  "framework": "vue",
+  "recipes": [
+    {
+      "id": "vue-recipe-01",
+      "domain": "representation",
+      "keywords": "reactive destructured primitive toref torefs composition state stale",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/vue/playbook.md"
+      ],
+      "heading": "## 1. Destructured primitive stops changing",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "vue-recipe-02",
+      "domain": "lifecycle",
+      "keywords": "nexttick dom measurement stale flush post watcher update timing",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/vue/playbook.md"
+      ],
+      "heading": "## 2. State is correct but immediate DOM measurement is stale",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "vue-recipe-03",
+      "domain": "concurrency",
+      "keywords": "watcher stale fetch request race cleanup await obsolete response",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/vue/playbook.md"
+      ],
+      "heading": "## 3. Watcher applies an old fetch after the user changes selection",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "vue-boundary",
+      "domain": "lifecycle",
+      "keywords": "computed sort reverse mutates source shared reactive array getter observer writer",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/vue/boundary-case.md"
+      ],
+      "heading": "# Vue: Reading a computed sort changes another component's list",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

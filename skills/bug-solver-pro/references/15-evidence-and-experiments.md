@@ -22,6 +22,8 @@ Reduce inputs while retaining the failing execution path. Compare failing and he
 
 Empty logs do not prove absence when sampling, buffering, crashes, or context propagation remain unchecked. Passing tests that never reach the failing path are not evidence of repair.
 
+Apply the [causal decision gates](19-causal-decision-procedure.md) before interpreting a recipe's falsifier: show that prerequisites and the trigger occurred and the observation could detect the prediction. A non-failure without those conditions is inconclusive. For multiplicity, inspect action/submission/attempt/commit/effect counts separately; one count cannot stand in for another.
+
 ## When reproduction is unavailable
 
 1. Preserve available incident evidence and sanitize sensitive data. Identify signatures, affected cohorts, and healthy comparison cases.

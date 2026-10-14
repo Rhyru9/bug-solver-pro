@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "javascript-typescript",
+  "framework": "nest",
+  "recipes": [
+    {
+      "id": "nest-recipe-01",
+      "domain": "lifecycle",
+      "keywords": "duplicate provider registration module imports exports constructor instance singleton",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/nest/playbook.md"
+      ],
+      "heading": "## 1. One provider unexpectedly has multiple instances",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "nest-recipe-02",
+      "domain": "lifecycle",
+      "keywords": "request scoped singleton state tenant leak construction instance identity",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/nest/playbook.md"
+      ],
+      "heading": "## 2. Request state leaks or construction count explodes",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "nest-recipe-03",
+      "domain": "lifecycle",
+      "keywords": "undefined injection token interface circular barrel import runtime provider",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/nest/playbook.md"
+      ],
+      "heading": "## 3. Dependency is undefined despite a visible import",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "nest-boundary",
+      "domain": "contracts",
+      "keywords": "runtime dto metadata validation pipe interface type erased malformed whitelist class",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/nest/boundary-case.md"
+      ],
+      "heading": "# NestJS: ValidationPipe is installed but malformed DTOs still pass",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

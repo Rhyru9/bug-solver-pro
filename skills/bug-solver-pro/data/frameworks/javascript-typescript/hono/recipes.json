@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "javascript-typescript",
+  "framework": "hono",
+  "recipes": [
+    {
+      "id": "hono-recipe-01",
+      "domain": "control-flow",
+      "keywords": "middleware next await unfinished downstream response order",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/hono/playbook.md"
+      ],
+      "heading": "## 1. After-middleware sees an unfinished response",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "hono-recipe-02",
+      "domain": "contracts",
+      "keywords": "response replacement loses headers cookie cors status c res",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/hono/playbook.md"
+      ],
+      "heading": "## 2. Headers disappear after middleware rewrites the body",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "hono-recipe-03",
+      "domain": "lifecycle",
+      "keywords": "context variables type c set undefined runtime middleware registration",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/hono/playbook.md"
+      ],
+      "heading": "## 3. Typed context variable is undefined at runtime",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "hono-boundary",
+      "domain": "integration",
+      "keywords": "raw request bodyused body consumed cached helper clone raw request validator",
+      "references": [
+        "references/languages/javascript-typescript/frameworks/hono/boundary-case.md"
+      ],
+      "heading": "# Hono: Validator works but a later raw Request read fails",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}

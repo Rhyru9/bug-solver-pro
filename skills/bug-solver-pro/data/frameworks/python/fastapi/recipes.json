@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "language": "python",
+  "framework": "fastapi",
+  "recipes": [
+    {
+      "id": "fastapi-recipe-01",
+      "domain": "performance",
+      "keywords": "async blocking helper event loop stall concurrent latency sync endpoint",
+      "references": [
+        "references/languages/python/frameworks/fastapi/playbook.md"
+      ],
+      "heading": "## 1. One async endpoint stalls unrelated requests",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "fastapi-recipe-02",
+      "domain": "control-flow",
+      "keywords": "yield dependency catch swallowed exception cleanup re raise error",
+      "references": [
+        "references/languages/python/frameworks/fastapi/playbook.md"
+      ],
+      "heading": "## 2. Errors disappear in a yield dependency",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "fastapi-recipe-03",
+      "domain": "lifecycle",
+      "keywords": "yield session closed stream background task scope lifetime disposed",
+      "references": [
+        "references/languages/python/frameworks/fastapi/playbook.md"
+      ],
+      "heading": "## 3. Stream or background job uses a closed session",
+      "evidence_kind": "heuristic"
+    },
+    {
+      "id": "fastapi-boundary",
+      "domain": "contracts",
+      "keywords": "response model filtered extra fields jsonresponse direct response bypass dto serialization",
+      "references": [
+        "references/languages/python/frameworks/fastapi/boundary-case.md"
+      ],
+      "heading": "# FastAPI: A supposedly filtered response exposes extra fields on one route",
+      "evidence_kind": "heuristic"
+    }
+  ]
+}
