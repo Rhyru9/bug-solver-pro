@@ -126,6 +126,10 @@ To add coverage, start with a concrete debugging gap and the [module template](s
 
 Report a bug or missing diagnostic angle in [GitHub issues](https://github.com/Rhyru9/bug-solver-pro/issues). Changes are recorded in [CHANGELOG.md](CHANGELOG.md).
 
+## Community standards
+
+Please follow the [Code of Conduct](CODE_OF_CONDUCT.md). To report a vulnerability privately, see the [Security Policy](SECURITY.md).
+
 ## License
 
 [MIT](LICENSE), copyright (c) 2026 Rhyru9. The license is also bundled in the standalone [skill folder](skills/bug-solver-pro/LICENSE).
